@@ -1,0 +1,38 @@
+name: build_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: opencinemac/azure-pipelines-templates
+      endpoint: Github_Read
+
+trigger:
+  batch: true
+  # We are going to only be doing builds for the 'dev' branch. Master will be updated
+  # from dev on successful builds rather than being updated directly.
+  branches:
+    include:
+      - dev
+    exclude:
+      - build_*
+      - v*
+      - master
+      - main
+
+pr:
+  - dev
+
+variables:
+  # Link to the variables template.
+  - template: variables.yml@templates
+
+# We extend the pipeline as a security feature.
+extends:
+  # Link to the pipeline template.
+  template: main.yml@templates
+  parameters:
+    language: PYTHON
+    buildType: LIBRARY
+    publishDocs: true
+    publishToPypiOrg: true

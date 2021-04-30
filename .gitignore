@@ -1,0 +1,41 @@
+# Eggs
+*.egg-info/
+*.egg
+eggs/
+develop-eggs/
+
+# Bytecode compilation
+**/__pycache__/
+*.py[cod]
+*.pyc
+
+# library caches
+.mypy_cache
+.pytest_cache
+
+# library scratch
+.coverage
+zdevelop/tests/_reports/
+zdevelop/tests/htmlcov/
+zdevelop/scratch/*
+
+# venvs
+.venv/
+venv/
+env/
+ENV/
+
+# system files
+.DS_Store
+
+# Build Detritus
+bin/
+build/
+dist/
+lib/
+lib64/
+parts/
+sdist/
+var/
+.installed.cfg
+.idea/
