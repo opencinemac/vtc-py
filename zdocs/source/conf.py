@@ -1,5 +1,6 @@
 import configparser
 import pathlib
+
 from typing import List, Dict, Any
 
 config_path = pathlib.Path(__file__).parent.parent.parent / "setup.cfg"
@@ -188,6 +189,11 @@ epub_exclude_files = ["search.html"]
 
 
 # -- Extension configuration -------------------------------------------------
+
+# -- Options for intersphinx extension ---------------------------------------
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {"https://zdocs.python.org/": None}
 
 # -- Options for todo extension ----------------------------------------------
 

@@ -1,0 +1,8 @@
+[run]
+source = vtc
+
+[html]
+directory = zdevelop/tests/_reports/coverage
+
+[xml]
+output = zdevelop/tests/_reports/coverage.xml
