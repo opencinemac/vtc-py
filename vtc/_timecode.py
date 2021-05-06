@@ -69,37 +69,34 @@ class Timecode:
         other: Union[int, float, fractions.Fraction, decimal.Decimal],
     ) -> "Timecode":
         # Return a new timecode with the multiplication applied.
-        if isinstance(other, decimal.Decimal):
-            other = fractions.Fraction(other)
-        return Timecode(self._value * other, rate=self._rate)
+        return Timecode(round(self.frames * other), rate=self._rate)
 
     def __truediv__(
         self,
         other: Union[int, float, fractions.Fraction, decimal.Decimal],
     ) -> "Timecode":
         # Return a new timecode with the multiplication applied.
-        if isinstance(other, decimal.Decimal):
-            other = fractions.Fraction(other)
-        return Timecode(self._value / other, rate=self._rate)
+        return Timecode(round(self.frames / other), rate=self._rate)
+
+    def __floordiv__(
+        self,
+        other: Union[int, float, fractions.Fraction, decimal.Decimal],
+    ) -> "Timecode":
+        # Return a new timecode with the multiplication applied.
+        return Timecode(int(self.frames // other), rate=self._rate)
 
     def __mod__(
         self,
         other: Union[int, float, fractions.Fraction, decimal.Decimal],
     ) -> "Timecode":
-        if isinstance(other, decimal.Decimal):
-            other = fractions.Fraction(other)
-        divided = Timecode(self._value / other, rate=self._rate)
-        return self - divided
+        return Timecode(int(self.frames % other), rate=self._rate)
 
     def __divmod__(
         self,
         other: Union[int, float, fractions.Fraction, decimal.Decimal],
     ) -> Tuple["Timecode", "Timecode"]:
-        if isinstance(other, decimal.Decimal):
-            other = fractions.Fraction(other)
-        divided = Timecode(self._value / other, rate=self._rate)
-        modulo = self - divided
-        return divided, modulo
+        dividend, modulo = divmod(self.frames, other)
+        return Timecode(int(dividend), self._rate), Timecode(int(modulo), self._rate)
 
     @property
     def rate(self) -> Framerate:
@@ -332,7 +329,7 @@ def _parse_tc_str(tc: str, rate: Framerate) -> fractions.Fraction:
         hours = int(groups[-3])
 
     if rate.ntsc:
-        calc_rate = Framerate(round(rate.frac))
+        calc_rate = Framerate(round(rate.frac), ntsc=False)
     else:
         calc_rate = rate
 
@@ -349,7 +346,7 @@ def _parse_tc_str(tc: str, rate: Framerate) -> fractions.Fraction:
         seconds = seconds + minutes * _SECONDS_PER_MINUTE + hours * _SECONDS_PER_HOUR
 
         # Now get the frames as a fractional and then convert to an int.
-        frames_frac = (frames / calc_rate.frac) + seconds * calc_rate.frac
+        frames_frac = frames + seconds * calc_rate.frac
 
     # Now parse the frame count.
     return _parse_int(round(frames_frac), rate)
@@ -399,10 +396,17 @@ def _parse_float(seconds: float, rate: Framerate) -> fractions.Fraction:
 
 
 def _parse_fraction(seconds: fractions.Fraction, rate: Framerate) -> fractions.Fraction:
+    """
+    _parse_fraction parses a fractional seconds value to a fractional frames value.
+    """
     return _parse_int(_rational_to_frames(seconds, rate), rate)
 
 
 def _parse_decimal(seconds: decimal.Decimal, rate: Framerate) -> fractions.Fraction:
+    """
+    _parse_decimal parses a decimal.Decimal seconds value to a frame count fractional
+    value.
+    """
     frames = _rational_to_frames(fractions.Fraction(seconds), rate)
     return _parse_int(frames, rate)
 

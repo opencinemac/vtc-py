@@ -611,3 +611,6 @@ class TestTimebaseBasics(unittest.TestCase):
         for case in cases:
             with self.subTest(f"{repr(case.fr1)} == {repr(case.fr2)} | {case.equal}"):
                 self.assertEqual(case.equal, case.fr1 == case.fr2, "check equality")
+
+    def test_equality_usupported_type(self) -> None:
+        self.assertNotEqual(vtc.RATE.F24, dict(), "not equal to dict")
