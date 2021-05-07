@@ -4,13 +4,23 @@ import re
 from typing import Union, List, Tuple, Optional
 
 from ._framerate import Framerate, FramerateSource
+from ._premiere_ticks import PremiereTicks
+from ._consts import (
+    _runtime_regex,
+    _tc_regex,
+    _feet_and_frames_regex,
+    _PPRO_TICKS_PER_SECOND,
+    _FRAMES_PER_FOOT,
+    _SECONDS_PER_MINUTE,
+    _SECONDS_PER_HOUR,
+)
 
 
 class Timecode:
-    def __init__(self, tc: "TimecodeSource", rate: FramerateSource) -> None:
+    def __init__(self, src: "TimecodeSource", rate: FramerateSource) -> None:
         """Timecode represents the frame at a particular time in a video."""
         self._rate: Framerate = Framerate(rate)
-        self._value: fractions.Fraction = _parse(tc, self._rate)
+        self._value: fractions.Fraction = _parse(src, self._rate)
 
     def __repr__(self) -> str:
         return f"[{self.timecode} @ {repr(self._rate)}]"
@@ -151,6 +161,17 @@ class Timecode:
         return _rational_to_frames(self._value, self._rate)
 
     @property
+    def feet_and_frames(self) -> str:
+        """
+        returns the number of feet and frames this timecode represents if it were
+        shot on 35mm 4-perf film (16 frames per foot). ex: '5400+13'.
+
+        feet and frames is most commonly used as a reference in the sound mixing world.
+        """
+        feet, frames = divmod(self.frames, _FRAMES_PER_FOOT)
+        return f"{feet}+{str(frames).zfill(2)}"
+
+    @property
     def seconds(self) -> decimal.Decimal:
         """
         seconds returns the number of seconds that would have elapsed between
@@ -162,12 +183,20 @@ class Timecode:
             self._value.denominator
         )
 
+    @property
+    def premiere_ticks(self) -> PremiereTicks:
+        return PremiereTicks(round(self._value * _PPRO_TICKS_PER_SECOND))
+
     def runtime(self, precision: Optional[int] = 9) -> str:
         """
         runtime returns the true runtime of the timecode in HH:MM:SS.FFFFFFFFF format.
 
         :param precision: how many places to print for fractional seconds.
             None=no rounding.
+
+        Runtime will always be returned with at least one decimal place in order to
+        distinguish it from timecode without an hours value. A runtime of exactly one
+        hour will be returned as '01:00:00.0'
 
         Note: The true runtime will often diverge from the hours, minutes, and seconds
             value of the timecode representation when dealing with non-whole-frame
@@ -181,9 +210,8 @@ class Timecode:
         hours, seconds = divmod(seconds, _SECONDS_PER_HOUR)
         minutes, seconds = divmod(seconds, _SECONDS_PER_MINUTE)
         seconds, fractal = divmod(seconds, 1)
-
         if fractal == 0:
-            fractal_str = ""
+            fractal_str = ".0"
         else:
             fractal_str = "." + str(fractal).split(".")[-1].rstrip("0")
 
@@ -202,7 +230,15 @@ class Timecode:
         return Timecode(self.frames, new_rate)
 
 
-TimecodeSource = Union[Timecode, str, int, float, fractions.Fraction, decimal.Decimal]
+TimecodeSource = Union[
+    Timecode,
+    str,
+    int,
+    float,
+    fractions.Fraction,
+    decimal.Decimal,
+    PremiereTicks,
+]
 """
 TimecodeSource is the types of source values a timecode can be created from. See
 documentation for details on how different value types as converted.
@@ -272,7 +308,10 @@ def _rational_to_frames(seconds: fractions.Fraction, rate: Framerate) -> int:
 def _parse(src: TimecodeSource, rate: Framerate) -> fractions.Fraction:
     """_parse converts an input value and rate into rational time."""
     if isinstance(src, str):
-        return _parse_tc_str(src, rate)
+        return _parse_str(src, rate)
+    # Premiere ticks check needs to come before int since it inherits int.
+    elif isinstance(src, PremiereTicks):
+        return _parse_premiere_ticks(src, rate)
     elif isinstance(src, int):
         return _parse_int(src, rate)
     elif isinstance(src, float):
@@ -287,32 +326,41 @@ def _parse(src: TimecodeSource, rate: Framerate) -> fractions.Fraction:
         raise TypeError(f"unsupported type for Timecode conversion: {type(src)}")
 
 
-_tc_regex: re.Pattern = re.compile(
-    r"((?P<section1>[0-9]{1,2})[:|;])?((?P<section2>[0-9]{1,2})[:|;])?"
-    r"((?P<section3>[0-9]{1,2})[:|;])?(?P<frames>[0-9]{1,2})$"
-)
-
-#
-_SECONDS_PER_MINUTE = 60
-_SECONDS_PER_HOUR = 3600
-
-
-def _parse_tc_str(tc: str, rate: Framerate) -> fractions.Fraction:
-    """_parse_tc_str converts a timecode string (ex: 01:00:00:00) into a tc value"""
+def _parse_str(src: str, rate: Framerate) -> fractions.Fraction:
+    """
+    parse non-numeric string parses a string that represents a timecode, runtime or
+    feet+frames.
+    """
     # Match against our tc regex.
-    re_match = _tc_regex.fullmatch(tc)
-    # If there is no match, raise a regex error.
-    if re_match is None:
-        raise ValueError(f"{repr(tc)} is not a timecode string")
+    matched = _tc_regex.fullmatch(src)
+    if matched:
+        return _parse_tc_str(matched, rate)
 
+    matched = _runtime_regex.fullmatch(src)
+    if matched:
+        return _parse_runtime_str(matched, rate)
+
+    matched = _feet_and_frames_regex.fullmatch(src)
+    if matched:
+        return _parse_feet_and_frames_str(matched, rate)
+
+    # If there is no match, raise a regex error.
+    raise ValueError(f"{repr(src)} is not a recognized timecode format")
+
+
+def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
+    """
+    _parse_tc_str converts a timecode string (ex: 01:00:00:00) into a fractional
+    seconds value.
+    """
     # We will always have a 'frames' group.
-    frames: int = int(re_match.group("frames"))
+    frames: int = int(matched.group("frames"))
     # Some timecodes may be abbreviated, so the other three sections may or may not be
     # present. Gather them then filter out empty sections.
     groups: List[int] = [
-        re_match.group("section1"),
-        re_match.group("section2"),
-        re_match.group("section3"),
+        matched.group("section1"),
+        matched.group("section2"),
+        matched.group("section3"),
     ]
     groups = [x for x in groups if x]
 
@@ -350,6 +398,62 @@ def _parse_tc_str(tc: str, rate: Framerate) -> fractions.Fraction:
 
     # Now parse the frame count.
     return _parse_int(round(frames_frac), rate)
+
+
+def _parse_runtime_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
+    """
+    _parse_runtime_str parses a runtime string (ex 01:00:00.6) into a fractional
+    seconds value.
+    """
+    # We will always have a 'frames' group.
+    seconds: decimal.Decimal = decimal.Decimal(matched.group("seconds"))
+    # Some timecodes may be abbreviated, so the other three sections may or may not be
+    # present. Gather them then filter out empty sections.
+    groups: List[int] = [
+        matched.group("section1"),
+        matched.group("section2"),
+    ]
+
+    groups = [x for x in groups if x]
+
+    # Work backwards to fill in the sections that are present, otherwise the value is
+    # '0'.
+    minutes = 0
+    hours = 0
+    if len(groups) >= 1:
+        minutes = int(groups[-1])
+    if len(groups) >= 2:
+        hours = int(groups[-2])
+
+    print()
+    print("HOURS:", hours)
+    print("MINUTES:", minutes)
+    print("SECONDS:", seconds)
+
+    # Calculate the number of seconds as a decimal, then use our decimal parser to
+    # arrive at the correct result.
+    seconds = seconds + minutes * _SECONDS_PER_MINUTE + hours * _SECONDS_PER_HOUR
+
+    print("SECONDS:", seconds)
+    return _parse_decimal(seconds, rate)
+
+
+def _parse_feet_and_frames_str(
+    matched: re.Match,
+    rate: Framerate,
+) -> fractions.Fraction:
+    """
+    _parse_runtime_str parses a feet+frames string (ex 5400+13) into a fractional
+    seconds value.
+    """
+    feet_str = matched.group("feet")
+    frames_str = matched.group("frames")
+
+    # Get the total frame count.
+    frames = int(feet_str) * _FRAMES_PER_FOOT + int(frames_str)
+
+    # Pass it off to our frame count parser.
+    return _parse_int(frames, rate)
 
 
 def _parse_drop_frame(
@@ -409,6 +513,11 @@ def _parse_decimal(seconds: decimal.Decimal, rate: Framerate) -> fractions.Fract
     """
     frames = _rational_to_frames(fractions.Fraction(seconds), rate)
     return _parse_int(frames, rate)
+
+
+def _parse_premiere_ticks(ticks: PremiereTicks, rate: Framerate) -> fractions.Fraction:
+    seconds = ticks / _PPRO_TICKS_PER_SECOND
+    return _parse_fraction(seconds, rate)
 
 
 def _coerce_other(other: TimecodeSource, this_rate: Framerate) -> Timecode:

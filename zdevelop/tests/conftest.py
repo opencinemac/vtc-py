@@ -6,6 +6,8 @@ import pathlib
 
 from typing import Dict, Any, List
 
+import vtc
+
 
 @dataclasses.dataclass(frozen=True)
 class TableTimecodeInfo:
@@ -15,8 +17,12 @@ class TableTimecodeInfo:
     frame_rate_frac: fractions.Fraction
     timecode: str
     frame: int
+    frame_xml_raw: int
+    ppro_ticks: vtc.PremiereTicks
+    ppro_ticks_xml_raw: vtc.PremiereTicks
     seconds_rational: fractions.Fraction
     seconds_decimal: decimal.Decimal
+    feet_and_frames: str
     runtime: str
 
     @classmethod
@@ -28,6 +34,8 @@ class TableTimecodeInfo:
         data["frame_rate_frac"] = fractions.Fraction(data["frame_rate_frac"])
         data["seconds_rational"] = fractions.Fraction(data["seconds_rational"])
         data["seconds_decimal"] = decimal.Decimal(data["seconds_decimal"])
+        data["ppro_ticks"] = vtc.PremiereTicks(data["ppro_ticks"])
+        data["ppro_ticks_xml_raw"] = vtc.PremiereTicks(data["ppro_ticks_xml_raw"])
 
         # Pass the dict in as a kwargs object.
         return TableTimecodeInfo(**data)
