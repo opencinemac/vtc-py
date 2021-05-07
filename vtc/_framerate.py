@@ -219,13 +219,19 @@ FramerateSource = Union[Framerate, str, Tuple[int, int], fractions.Fraction, flo
 """FramerateSource is the set of types a Framerate can be created from"""
 
 
-@dataclasses.dataclass
+# We'll use a frozen dataclass for this so the values cannot be changed.
+@dataclasses.dataclass(frozen=True)
 class _Rates:
+    """
+    _Rates is used as a one-off na to hold a number of common pre-defined framerates for
+    callers to use.
+    """
+
     F23_98: Framerate = Framerate(23.98, ntsc=True)
     """23.98 fps NTSC."""
 
     F24: Framerate = Framerate(24)
-    """24 fps framerate."""
+    """24 fps."""
 
     F29_97_NDF: Framerate = Framerate(29.97, ntsc=True)
     """29.97 fps NTSC."""
