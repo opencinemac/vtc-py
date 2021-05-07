@@ -108,6 +108,12 @@ class Timecode:
         dividend, modulo = divmod(self.frames, other)
         return Timecode(int(dividend), self._rate), Timecode(int(modulo), self._rate)
 
+    def __neg__(self) -> "Timecode":
+        return Timecode(-self._value, self._rate)
+
+    def __abs__(self) -> "Timecode":
+        return Timecode(abs(self._value), self._rate)
+
     @property
     def rate(self) -> Framerate:
         """rate is the framerate at which this timecode is being interpreted"""
@@ -147,10 +153,11 @@ class Timecode:
         if self._rate.drop_frame:
             frames_sep = ";"
 
-        return (
+        timecode = (
             f"{str(hours).zfill(2)}:{str(minutes).zfill(2)}"
             f":{str(seconds).zfill(2)}{frames_sep}{str(frames).zfill(2)}"
         )
+        return _add_neg_to_rep(self._value, timecode)
 
     @property
     def frames(self) -> int:
@@ -169,7 +176,8 @@ class Timecode:
         feet and frames is most commonly used as a reference in the sound mixing world.
         """
         feet, frames = divmod(self.frames, _FRAMES_PER_FOOT)
-        return f"{feet}+{str(frames).zfill(2)}"
+        feet_and_frames = f"{feet}+{str(frames).zfill(2)}"
+        return _add_neg_to_rep(self._value, feet_and_frames)
 
     @property
     def seconds(self) -> decimal.Decimal:
@@ -220,7 +228,7 @@ class Timecode:
             f"{str(seconds).zfill(2)}{fractal_str}"
         )
 
-        return runtime
+        return _add_neg_to_rep(self._value, runtime)
 
     def rebase(self, new_rate: FramerateSource) -> "Timecode":
         """
@@ -243,6 +251,17 @@ TimecodeSource = Union[
 TimecodeSource is the types of source values a timecode can be created from. See
 documentation for details on how different value types as converted.
 """
+
+
+def _add_neg_to_rep(frac_val: fractions.Fraction, rep: str) -> str:
+    """
+    _add_neg_to_rep adds a negative sign to a string tc representation if the value is
+    less than 0.
+    """
+    if frac_val >= 0:
+        return rep
+
+    return "-" + rep
 
 
 def _frame_num_to_drop_frame_num(frame_number: int, rate: Framerate) -> int:
