@@ -133,7 +133,7 @@ class Timecode:
         timecode returns the formatted SMPTE timecode: (ex: 01:00:00:00).
         """
         rate = self._rate
-        frames_number = self.frames
+        frames_number = abs(self.frames)
 
         if self._rate.drop_frame:
             # We need to do an adjustment for drop-frame timecode
@@ -175,7 +175,7 @@ class Timecode:
 
         feet and frames is most commonly used as a reference in the sound mixing world.
         """
-        feet, frames = divmod(self.frames, _FRAMES_PER_FOOT)
+        feet, frames = divmod(abs(self.frames), _FRAMES_PER_FOOT)
         feet_and_frames = f"{feet}+{str(frames).zfill(2)}"
         return _add_neg_to_rep(self._value, feet_and_frames)
 
@@ -213,7 +213,7 @@ class Timecode:
             '00:59:59.9964', and [01:00:00:00 @ 23.98 NTSC] has a true runtime of
             '01:00:03.6'
         """
-        seconds = round(self.seconds, ndigits=precision)
+        seconds = round(abs(self.seconds), ndigits=precision)
 
         hours, seconds = divmod(seconds, _SECONDS_PER_HOUR)
         minutes, seconds = divmod(seconds, _SECONDS_PER_MINUTE)
@@ -415,6 +415,9 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
         # Now get the frames as a fractional and then convert to an int.
         frames_frac = frames + seconds * calc_rate.frac
 
+    if matched.group("negative"):
+        frames_frac = -frames_frac
+
     # Now parse the frame count.
     return _parse_int(round(frames_frac), rate)
 
@@ -444,16 +447,13 @@ def _parse_runtime_str(matched: re.Match, rate: Framerate) -> fractions.Fraction
     if len(groups) >= 2:
         hours = int(groups[-2])
 
-    print()
-    print("HOURS:", hours)
-    print("MINUTES:", minutes)
-    print("SECONDS:", seconds)
-
     # Calculate the number of seconds as a decimal, then use our decimal parser to
     # arrive at the correct result.
     seconds = seconds + minutes * _SECONDS_PER_MINUTE + hours * _SECONDS_PER_HOUR
 
-    print("SECONDS:", seconds)
+    if matched.group("negative"):
+        seconds = -seconds
+
     return _parse_decimal(seconds, rate)
 
 
@@ -470,6 +470,9 @@ def _parse_feet_and_frames_str(
 
     # Get the total frame count.
     frames = int(feet_str) * _FRAMES_PER_FOOT + int(frames_str)
+
+    if matched.group("negative"):
+        frames = -frames
 
     # Pass it off to our frame count parser.
     return _parse_int(frames, rate)

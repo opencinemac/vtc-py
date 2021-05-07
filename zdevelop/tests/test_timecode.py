@@ -83,6 +83,16 @@ class TestParse(unittest.TestCase):
                 runtime="01:00:03.6",
                 feet_and_frames="5400+00",
             ),
+            # Test Negative
+            ParseTCCase(
+                rate=vtc.RATE.F23_98,
+                frac=-fractions.Fraction(18018, 5),
+                frames=-86400,
+                timecode="-01:00:00:00",
+                seconds=-decimal.Decimal("3603.6"),
+                runtime="-01:00:03.6",
+                feet_and_frames="-5400+00",
+            ),
             ParseTCCase(
                 rate=vtc.RATE.F23_98,
                 frac=fractions.Fraction(12012, 5),
@@ -91,6 +101,16 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("2402.4"),
                 runtime="00:40:02.4",
                 feet_and_frames="3600+00",
+            ),
+            # Test negative
+            ParseTCCase(
+                rate=vtc.RATE.F23_98,
+                frac=-fractions.Fraction(12012, 5),
+                frames=-57600,
+                timecode="-00:40:00:00",
+                seconds=-decimal.Decimal("2402.4"),
+                runtime="-00:40:02.4",
+                feet_and_frames="-3600+00",
             ),
             # 24 ---------------------------------
             # ------------------------------------
@@ -103,6 +123,16 @@ class TestParse(unittest.TestCase):
                 runtime="01:00:00.0",
                 feet_and_frames="5400+00",
             ),
+            # Negative
+            ParseTCCase(
+                rate=vtc.RATE.F24,
+                frac=-fractions.Fraction(3600, 1),
+                frames=-86400,
+                timecode="-01:00:00:00",
+                seconds=-decimal.Decimal(3600),
+                runtime="-01:00:00.0",
+                feet_and_frames="-5400+00",
+            ),
             ParseTCCase(
                 rate=vtc.RATE.F24,
                 frac=fractions.Fraction(2400, 1),
@@ -111,6 +141,16 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("2400.0"),
                 runtime="00:40:00.0",
                 feet_and_frames="3600+00",
+            ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F24,
+                frac=-fractions.Fraction(2400, 1),
+                frames=-57600,
+                timecode="-00:40:00:00",
+                seconds=-decimal.Decimal("2400.0"),
+                runtime="-00:40:00.0",
+                feet_and_frames="-3600+00",
             ),
             # 29.97 DF ---------------------------
             # ------------------------------------
@@ -123,6 +163,16 @@ class TestParse(unittest.TestCase):
                 runtime="00:00:02.068733333",
                 feet_and_frames="3+14",
             ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
+                frac=-fractions.Fraction(31031, 15000),
+                frames=-62,
+                timecode="-00:00:02;02",
+                seconds=-decimal.Decimal("2.068733333333333333333333333"),
+                runtime="-00:00:02.068733333",
+                feet_and_frames="-3+14",
+            ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
                 frac=fractions.Fraction(3003, 50),
@@ -131,6 +181,16 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("60.06"),
                 runtime="00:01:00.06",
                 feet_and_frames="112+08",
+            ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
+                frac=-fractions.Fraction(3003, 50),
+                frames=-1800,
+                timecode="-00:01:00;02",
+                seconds=-decimal.Decimal("60.06"),
+                runtime="-00:01:00.06",
+                feet_and_frames="-112+08",
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -141,6 +201,16 @@ class TestParse(unittest.TestCase):
                 runtime="00:02:00.053266667",
                 feet_and_frames="224+14",
             ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
+                frac=-fractions.Fraction(1800799, 15000),
+                frames=-3598,
+                timecode="-00:02:00;02",
+                seconds=-decimal.Decimal("120.0532666666666666666666667"),
+                runtime="-00:02:00.053266667",
+                feet_and_frames="-224+14",
+            ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
                 frac=fractions.Fraction(2999997, 5000),
@@ -149,6 +219,16 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("599.9994"),
                 runtime="00:09:59.9994",
                 feet_and_frames="1123+14",
+            ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
+                frac=-fractions.Fraction(2999997, 5000),
+                frames=-17982,
+                timecode="-00:10:00;00",
+                seconds=-decimal.Decimal("599.9994"),
+                runtime="-00:09:59.9994",
+                feet_and_frames="-1123+14",
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -159,6 +239,16 @@ class TestParse(unittest.TestCase):
                 runtime="00:11:00.0594",
                 feet_and_frames="1236+06",
             ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
+                frac=-fractions.Fraction(3300297, 5000),
+                frames=-19782,
+                timecode="-00:11:00;02",
+                seconds=-decimal.Decimal("660.0594"),
+                runtime="-00:11:00.0594",
+                feet_and_frames="-1236+06",
+            ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
                 frac=fractions.Fraction(8999991, 2500),
@@ -167,6 +257,16 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("3599.9964"),
                 runtime="00:59:59.9964",
                 feet_and_frames="6743+04",
+            ),
+            # negative
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
+                frac=-fractions.Fraction(8999991, 2500),
+                frames=-107892,
+                timecode="-01:00:00;00",
+                seconds=-decimal.Decimal("3599.9964"),
+                runtime="-00:59:59.9964",
+                feet_and_frames="-6743+04",
             ),
         ]
 
@@ -772,6 +872,45 @@ class TestMagicMethods(unittest.TestCase):
                     modulo,
                     name,
                 )
+
+    def test_neg(self) -> None:
+        """Tests __neg__"""
+        tc = vtc.Timecode("01:00:04:14", rate=vtc.RATE.F24)
+        neg = -tc
+
+        self.assertEqual("-01:00:04:14", neg.timecode, "timecode is negative")
+        self.assertEqual(-tc.frac, neg.frac, "fraction is negative")
+
+    def test_abs(self) -> None:
+        """Tests __neg__"""
+
+        class TestCase(NamedTuple):
+            tc_in: vtc.Timecode
+            abs: vtc.Timecode
+
+        cases: List[TestCase] = [
+            TestCase(
+                tc_in=vtc.Timecode("-01:00:04:14", rate=vtc.RATE.F24),
+                abs=vtc.Timecode("01:00:04:14", rate=vtc.RATE.F24),
+            ),
+            TestCase(
+                tc_in=vtc.Timecode("01:00:04:14", rate=vtc.RATE.F24),
+                abs=vtc.Timecode("01:00:04:14", rate=vtc.RATE.F24),
+            ),
+        ]
+
+        for case in cases:
+            test_name = f"abs({case.tc_in}) = {case.abs}"
+            with self.subTest(test_name):
+                abs_tc = abs(case.tc_in)
+
+                self.assertGreater(abs_tc.frac, 0, "value is greater than zero")
+                self.assertEqual(
+                    case.abs.timecode,
+                    abs_tc.timecode,
+                    "timecode is expected",
+                )
+                self.assertEqual(case.abs.frac, abs_tc.frac, "frac is expected")
 
     def test_timeline_addition(self) -> None:
         """
