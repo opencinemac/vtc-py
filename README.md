@@ -14,12 +14,12 @@ Features
     - [X] Drop-Frame
     - [ ] Interlaced timecode (not implemented)
 - Timecode Representations:
-    - Timecode&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| '01:00:00:00'
-    - Frames&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| 86400
-    - Seconds&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| 3600.0
-    - Runtime&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| '01:00:00.0'
-    - Rational&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| 18018/5
-    - Feet+Frames    | '5400+00'
+    - Timecode    | '01:00:00:00'
+    - Frames      | 86400
+    - Seconds     | 3600.0
+    - Runtime     | '01:00:00.0'
+    - Rational    | 18018/5
+    - Feet+Frames | '5400+00'
 
         - [X] 35mm, 4-perf
         - [ ] 35mm, 3-perf
@@ -38,10 +38,10 @@ Features
     - Absolute
     - Rebase (recalculate frame count at new framerate)
 - Flexible Parsing:
-    - Partial timecodes&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| '1:12'
-    - Partial runtimes&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;&#8195;| '1.5'
+    - Partial timecodes      | '1:12'
+    - Partial runtimes       | '1.5'
     - Negative string values | '-1:12', '-3+00'
-    - Poorly formatted tc's&#8195;&#8195;&#8195;&#8195;| '1:13:4'
+    - Poorly formatted tc    | '1:13:4'
 - Type inference for fast scripting (add a tc string to a Timecode value).
 - Built-in consts for common framerates.
 - Modern Python Typehints for static analysis.
