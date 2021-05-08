@@ -30,9 +30,9 @@ Features
 ========
 
     - SMPTE Conventions:
-        - NTSC
-        - Drop-Frame
-        - [[x]] Interlaced timecode (not implemented)
+        - [X] NTSC
+        - [X] Drop-Frame
+        - [-] Interlaced timecode (not implemented)
     - Timecode Representations:
         - Timecode       | '01:00:00:00'
         - Frames         | 86400
@@ -40,6 +40,12 @@ Features
         - Runtime        | '01:00:00.0'
         - Rational       | 18018/5
         - Feet+Frames    | '5400+00'
+
+            - [X] 35mm, 4-perf
+            - [-] 35mm, 3-perf
+            - [-] 35mm, 2-perf
+            - [-] 16mm
+
         - Premiere Ticks | 15240960000000
     - Operations:
         - Comparisons (==, <, <=, >, >=)
@@ -58,19 +64,6 @@ Features
         - Poorly formatted tc's  | '1:13:4'
     - Type inference for fast scripting (add a tc string to a Timecode value)
     - Modern Python Typehints for static analysis.
-
-Goals
-=====
-
-    - Parse and fetch all Timecode representations.
-    - A clean, Pythonic API
-    - Support all operations that make sense for timecode.
-    - Sane shortcuts for scripting
-
-Non-Goals
-=========
-
-    - Real-time timecode generators.
 
 Demo
 ====
@@ -222,3 +215,16 @@ Let's take a quick high-level look at what you can do with this library:
     # We can also rebase the frames using a new framerate!
     >>> tc.rebase(vtc.RATE.F23_98)
     [02:00:00:00 @ [23.98 NTSC]]
+
+Goals
+=====
+
+    - Parse and fetch all Timecode representations.
+    - A clean, Pythonic API
+    - Support all operations that make sense for timecode.
+    - Sane shortcuts for scripting
+
+Non-Goals
+=========
+
+    - Real-time timecode generators.
