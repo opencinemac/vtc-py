@@ -51,9 +51,7 @@ Demo
 
 Let's take a quick high-level look at what you can do with this library:
 
-```shell
-python3
-
+```python
 >>> import vtc
 
 # It's easy to make a new 23.98 NTSC timecode.
