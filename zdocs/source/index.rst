@@ -32,7 +32,7 @@ Features
     - SMPTE Conventions:
         - NTSC
         - Drop-Frame
-        - Interlaced timecode (not implemented)
+        - [[x]] Interlaced timecode (not implemented)
     - Timecode Representations:
         - Timecode       | '01:00:00:00'
         - Frames         | 86400
