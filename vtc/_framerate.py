@@ -6,22 +6,23 @@ from typing import Union, Tuple, Optional
 class Framerate:
     def __init__(
         self,
-        fr: "FramerateSource",
-        drop_frame: bool = False,
+        src: "FramerateSource",
+        *,
         ntsc: Optional[bool] = None,
+        dropframe: bool = False,
     ) -> None:
         """
-        Timebase is the rate at which a video file's timecode is playing, measured in
+        Framerate is the rate at which a video file's timecode is playing, measured in
         frames-per-second (24/1 = 24 frames-per-second).
 
-        :param fr: the source value to parse to a TimeBase. A timebase must conform to
+        :param src: the source value to parse to a Framerate. src must conform to
             one of the following value types:
 
-            - ``Timebase``: Another timebase value.
+            - :class:`Framerate`: Another timebase value.
 
-            - ``str``: Strings may be of a fractional value (`'24/1'`), whole numbers
-               representing the fps ('24') OR decimal numbers like ('23.9876') or 23.98.
-               Such values will be converted to their actual meaning (24000/1001).
+            - ``str``: Strings may be of a fractional value ('24/1'), whole numbers
+              representing the fps ('24') OR decimal numbers like ('23.9876') or 23.98.
+              Such values will be converted to their actual meaning (24000/1001).
 
             - ``Tuple[int, int]``: Numerator and denominator of a fraction.
 
@@ -29,26 +30,32 @@ class Framerate:
 
             - ``float`` value -- only allowed if ntsc=true.
 
-            Note: if a value like 1/24 is passed in (where the numerator is less than
-            the denominator), the value will be converted to 24/1 after being parsed.
+            .. note ::
 
-        :param ntsc: Whether timecode should be calculated via NTSC convention on
-            non-whole-number framerate. With NTSC, when a framerate is 23.976, the
-            TIMECODE is still calculated as if it were at 24fps. When this option is
-            turned on, the framerate will be rounded to the nearest whole number before
-            being the timecode representation is calculated.
+                if a value like 1/24 is passed in (where the numerator is less than
+                the denominator), the value will be converted to 24/1 after being
+                parsed.
 
-            ntsc=true will cause values to be coerced to ntsc if they are whole-number,
-            so '24' ntsc=True will result in a timebase of 24000/1001 that presents
-            timecode as if it were 24 fps.
+        :param ntsc: Whether timecode should be calculated via NTSC convention.
 
-            When ntsc is not set, non-whole number floats like 23.98 and fractional
-            values with a denominator of 1001 will be assumed to be ntsc.
+            For NTSC, playback speed is 23.976, the TIMECODE is still calculated as if
+            it were at 24fps, which affects how a :func:`~Timecode.timecode` value
+            will be rendered.
 
-        :param drop_frame: Whether this is a drop-frame style timecode (only available
+            When ``None``, non-whole number floats like 23.98 and fractional values
+            with a denominator of 1001 will be assumed to be ntsc, but whole-numbers
+            will be left as-is.
+
+            When this option is ``True``, the framerate will be rounded to the nearest
+            whole number before the :func:`~Timecode.timecode` representation is
+            calculated.
+
+            Whin
+
+        :param dropframe: Whether this is a drop-frame style timecode (only available
             for frame rates divisible by 30000/1001 like 29.97 and 59.94).
         """
-        if drop_frame:
+        if dropframe:
             if ntsc is False:
                 raise ValueError(
                     "ntsc must be [True] or [None] if drop_frame is [True]",
@@ -56,14 +63,14 @@ class Framerate:
             ntsc = True
 
         self._value: fractions.Fraction
-        self._drop_frame = drop_frame
+        self._dropframe = dropframe
         self._ntsc: bool
 
         # Parse tha value into a timebase.
-        self._value = _parse(fr, ntsc)
-        if isinstance(fr, Framerate):
-            self._drop_frame = fr.drop_frame
-            self._ntsc = fr.ntsc
+        self._value = _parse(src, ntsc)
+        if isinstance(src, Framerate):
+            self._dropframe = src.drop_frame
+            self._ntsc = src.ntsc
 
         # If no explicit ntsc value was set, assume that values with a denominator of
         # 1001 are ntsc.
@@ -78,7 +85,7 @@ class Framerate:
         # Validate that drop-frame TC is cleanly divisible by 30000/1001. Drop-frame is
         # not defined for any other timebases. Generally it is only allowed for 29.97
         # and 59.94
-        if self._drop_frame and self._value % fractions.Fraction(30000, 1001) != 0:
+        if self._dropframe and self._value % fractions.Fraction(30000, 1001) != 0:
             raise ValueError(
                 "drop_frame may only be true if framerate is divisible by "
                 "30000/1001 (29.97)"
@@ -91,11 +98,11 @@ class Framerate:
     def __repr__(self) -> str:
         """Returns formatted framerate information: (ex: '[24/1 fps NTSC]')"""
         rate_value = str(round(float(self._value), 2)).rstrip("0").rstrip(".")
-        value = f"[{rate_value} fps"
+        value = f"[{rate_value}"
         if self._ntsc:
             value += " NTSC"
 
-        if self._drop_frame:
+        if self._dropframe:
             value += " DF"
 
         value += "]"
@@ -113,7 +120,7 @@ class Framerate:
         return (
             self._value == other._value
             and self._ntsc == other._ntsc
-            and self._drop_frame == other._drop_frame
+            and self._dropframe == other._dropframe
         )
 
     @property
@@ -129,7 +136,7 @@ class Framerate:
     @property
     def drop_frame(self) -> bool:
         """Whether this Framerate is drop-frame."""
-        return self._drop_frame
+        return self._dropframe
 
 
 _DROP_FRAME_VALUES = (fractions.Fraction(30000, 1001), fractions.Fraction(60000, 1001))
@@ -236,7 +243,7 @@ class _Rates:
     F29_97_NDF: Framerate = Framerate(29.97, ntsc=True)
     """29.97 fps NTSC."""
 
-    F29_97_DF: Framerate = Framerate(29.97, drop_frame=True)
+    F29_97_DF: Framerate = Framerate(29.97, dropframe=True)
     """29.97 fps DROP FRAME."""
 
     F30: Framerate = Framerate(30)
@@ -251,7 +258,7 @@ class _Rates:
     F59_94_NDF: Framerate = Framerate(59.94, ntsc=True)
     """59.94 fps NTSC."""
 
-    F59_94_DF: Framerate = Framerate(59.94, drop_frame=True)
+    F59_94_DF: Framerate = Framerate(59.94, dropframe=True)
     """59.94 fps NTSC DROP FRAME."""
 
     F60: Framerate = Framerate(60)

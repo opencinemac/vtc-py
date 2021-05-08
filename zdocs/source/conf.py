@@ -52,10 +52,9 @@ add_module_names = False
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
     "sphinx_autodoc_typehints",
 ]
 
@@ -65,7 +64,6 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
 source_suffix = ".rst"
 
 # The master toctree document.
@@ -119,7 +117,7 @@ html_static_path = ["_static"]
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "islelibdoc"
+htmlhelp_basename = "vtcdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -143,7 +141,7 @@ latex_elements: Dict[str, Any] = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "islelib.tex", "islelib Documentation", "Billy Peake", "manual")
+    (master_doc, "vtc.tex", "vtc Documentation", "Billy Peake", "manual")
 ]
 
 
@@ -151,7 +149,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "islelib", "islelib Documentation", 1)]
+man_pages = [(master_doc, "vtc", "vtc Documentation", 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -162,11 +160,11 @@ man_pages = [(master_doc, "islelib", "islelib Documentation", 1)]
 texinfo_documents = [
     (
         master_doc,
-        "islelib",
-        "islelib Documentation",
-        "islelib",
-        "One line description of project.",
-        "Miscellaneous",
+        "vtc",
+        "vtc Documentation",
+        "vtc",
+        "A SMPTE timecode library for python.",
+        "Film Tools",
     )
 ]
 
@@ -193,7 +191,7 @@ epub_exclude_files = ["search.html"]
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"https://zdocs.python.org/": None}
+# intersphinx_mapping = {"https://zdocs.python.org/": None}
 
 # -- Options for todo extension ----------------------------------------------
 
@@ -204,3 +202,4 @@ todo_include_todos = True
 add_module_names = False
 autoclass_content = "both"
 autodoc_member_order = "groupwise"
+always_document_param_types = True

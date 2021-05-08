@@ -17,9 +17,61 @@ from ._consts import (
 
 
 class Timecode:
-    def __init__(self, src: "TimecodeSource", rate: FramerateSource) -> None:
-        """Timecode represents the frame at a particular time in a video."""
-        self._rate: Framerate = Framerate(rate)
+    def __init__(
+        self,
+        src: "TimecodeSource",
+        *,
+        rate: Optional[FramerateSource],
+    ) -> None:
+        """
+        Timecode represents the frame at a particular time in a video.
+
+        :param src: The source value to parse. The values type determines how it is
+            interpreted:
+
+            - ``vtc.Timecode``: used the ``vtc.Timecode.rational`` seconds value to
+              construct a new timecode.
+
+            - ``string``: etiher a timecode, runtime, or feet+frames string. Runtime
+              strings must have a fractal seconds place, i.e. '01:00:00.0'.
+
+            - ``int``: frame count.
+
+            - ``decimal.Decimal``: seconds.
+
+            - ``float``: seconds.
+
+            - ``fractions.Fraction``: seconds.
+
+            - ``vtc.PremiereTicks``: Adobe Premiere Pro ticks value.
+
+        :param rate: The framerate to use for this timecode. May be any value which
+            can be passed to the constructor of :class:`Framerate` or a
+            :class:`Framerate`. May only be ``None`` if ``src`` is  a :class:`Framerate`
+            instance.
+
+        :returns: A newly constructed :class:`Timecode` value.
+
+        :raises ValueError: If a string value passed to the constructor is not a valid
+            timecode, runtime, or feet+frames, or no rate value can be found.
+
+        :raises TypeError: If passed an unsupported type.
+        """
+        if isinstance(src, Timecode) and rate is not None:
+            raise ValueError(
+                "rate must be None if src is vtc.Timecode. To rebase Timecode, use"
+                "vtc.Timecode.rebase",
+            )
+
+        parse_rate = rate
+        if parse_rate is None:
+            if not isinstance(src, Timecode):
+                raise ValueError(
+                    "rate must be set for all Timecode src types except vtc.Timecode",
+                )
+            parse_rate = src.rate
+
+        self._rate: Framerate = Framerate(parse_rate)
         self._value: fractions.Fraction = _parse(src, self._rate)
 
     def __repr__(self) -> str:
@@ -67,12 +119,12 @@ class Timecode:
     def __add__(self, other: "TimecodeSource") -> "Timecode":
         other_tc = _coerce_other(other, self._rate)
         frac_value = self._value + other_tc._value
-        return Timecode(frac_value, self._rate)
+        return Timecode(frac_value, rate=self._rate)
 
     def __sub__(self, other: "TimecodeSource") -> "Timecode":
         other_tc = _coerce_other(other, self._rate)
         frac_value = self._value - other_tc._value
-        return Timecode(frac_value, self._rate)
+        return Timecode(frac_value, rate=self._rate)
 
     def __mul__(
         self,
@@ -106,13 +158,16 @@ class Timecode:
         other: Union[int, float, fractions.Fraction, decimal.Decimal],
     ) -> Tuple["Timecode", "Timecode"]:
         dividend, modulo = divmod(self.frames, other)
-        return Timecode(int(dividend), self._rate), Timecode(int(modulo), self._rate)
+        return (
+            Timecode(int(dividend), rate=self._rate),
+            Timecode(int(modulo), rate=self._rate),
+        )
 
     def __neg__(self) -> "Timecode":
-        return Timecode(-self._value, self._rate)
+        return Timecode(-self._value, rate=self._rate)
 
     def __abs__(self) -> "Timecode":
-        return Timecode(abs(self._value), self._rate)
+        return Timecode(abs(self._value), rate=self._rate)
 
     @property
     def rate(self) -> Framerate:
@@ -120,9 +175,9 @@ class Timecode:
         return self._rate
 
     @property
-    def frac(self) -> fractions.Fraction:
+    def rational(self) -> fractions.Fraction:
         """
-        frac is a fractional representation of number of seconds this timecode
+        frac is a rational (fraction) representation of number of seconds this timecode
         represents.
         """
         return self._value
@@ -193,11 +248,23 @@ class Timecode:
 
     @property
     def premiere_ticks(self) -> PremiereTicks:
+        """
+        premiere_ticks returns the number of elapsed ticks this timecode represents in
+        Adobe Premiere Pro.
+
+        Premiere uses ticks internally to track elapsed time. A second contains
+        254016000000 ticks, regardless of framerate.
+
+        These ticks are present in Premiere FCP7XML cutlists, and can sometimes be used
+        for more precise calculations during respeeds.
+
+        Ticks are also used for scripting in Premiere Panels.
+        """
         return PremiereTicks(round(self._value * _PPRO_TICKS_PER_SECOND))
 
     def runtime(self, precision: Optional[int] = 9) -> str:
         """
-        runtime returns the true runtime of the timecode in HH:MM:SS.FFFFFFFFF format.
+        Runtime returns the true runtime of the timecode in HH:MM:SS.FFFFFFFFF format.
 
         :param precision: how many places to print for fractional seconds.
             None=no rounding.
@@ -235,7 +302,7 @@ class Timecode:
         rebase re-calculates the timecode at a new frame rate based on the frame-count
         value of the current timecode.
         """
-        return Timecode(self.frames, new_rate)
+        return Timecode(self.frames, rate=new_rate)
 
 
 TimecodeSource = Union[
@@ -338,7 +405,7 @@ def _parse(src: TimecodeSource, rate: Framerate) -> fractions.Fraction:
     elif isinstance(src, decimal.Decimal):
         return _parse_decimal(src, rate)
     elif isinstance(src, Timecode):
-        return src.frac
+        return src.rational
     elif isinstance(src, fractions.Fraction):
         return _parse_fraction(src, rate)
     else:

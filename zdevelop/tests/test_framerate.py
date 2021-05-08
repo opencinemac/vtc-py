@@ -538,7 +538,7 @@ class TestTimebaseBasics(unittest.TestCase):
                         vtc.Framerate(
                             case.source,  # type: ignore
                             ntsc=case.ntsc_arg,
-                            drop_frame=case.expected_drop_frame,
+                            dropframe=case.expected_drop_frame,
                         )
 
                     self.assertEqual(
@@ -551,7 +551,7 @@ class TestTimebaseBasics(unittest.TestCase):
                 tb = vtc.Framerate(
                     case.source,  # type: ignore
                     ntsc=case.ntsc_arg,
-                    drop_frame=case.expected_drop_frame,
+                    dropframe=case.expected_drop_frame,
                 )
 
                 print("\nPARSED:", tb)
@@ -564,13 +564,13 @@ class TestTimebaseBasics(unittest.TestCase):
                 self.assertEqual(tb.ntsc, case.expected_ntsc, "ntsc value is expected")
 
     def test_parse_drop_frame(self) -> None:
-        fr = vtc.Framerate(29.97, drop_frame=True)
+        fr = vtc.Framerate(29.97, dropframe=True)
         self.assertEqual(fr.frac, fractions.Fraction(30000, 1001), "tb frac expected")
         self.assertTrue(fr.drop_frame, "tb is drop frame")
 
     def test_parse_error_drop_frame_bad_value(self) -> None:
         with self.assertRaises(ValueError) as error:
-            vtc.Framerate(23.98, drop_frame=True)
+            vtc.Framerate(23.98, dropframe=True)
 
         self.assertEqual(
             str(error.exception),
@@ -585,9 +585,9 @@ class TestTimebaseBasics(unittest.TestCase):
             expected: str
 
         cases: List[Case] = [
-            Case(vtc.Framerate(24), "[24 fps]"),
-            Case(vtc.Framerate(29.97, ntsc=True), "[29.97 fps NTSC]"),
-            Case(vtc.Framerate(29.97, drop_frame=True), "[29.97 fps NTSC DF]"),
+            Case(vtc.Framerate(24), "[24]"),
+            Case(vtc.Framerate(29.97, ntsc=True), "[29.97 NTSC]"),
+            Case(vtc.Framerate(29.97, dropframe=True), "[29.97 NTSC DF]"),
         ]
 
         for case in cases:
@@ -605,7 +605,7 @@ class TestTimebaseBasics(unittest.TestCase):
             Case(vtc.Framerate(23.98), vtc.Framerate("24000/1001"), True),
             Case(vtc.Framerate(23.98), vtc.Framerate("24000/1001", ntsc=False), False),
             Case(vtc.Framerate(23.98), vtc.Framerate(29.97), False),
-            Case(vtc.Framerate(29.97, drop_frame=True), vtc.Framerate(29.97), False),
+            Case(vtc.Framerate(29.97, dropframe=True), vtc.Framerate(29.97), False),
         ]
 
         for case in cases:

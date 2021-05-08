@@ -51,7 +51,7 @@ class ParseTCCase:
             rate=vtc.Framerate(
                 event.frame_rate_frac,
                 ntsc=event.ntsc,
-                drop_frame=event.drop_frame,
+                dropframe=event.drop_frame,
             ),
             frac=event.seconds_rational,
             frames=event.frame,
@@ -301,42 +301,173 @@ class TestParse(unittest.TestCase):
                 "00:62:62:04",
                 "01:03:02:04",
             ),
+            TestCase(
+                "123:00:00:00",
+                "123:00:00:00",
+            ),
+            TestCase(
+                "01:00:00:48",
+                "01:00:02:00",
+            ),
+            TestCase(
+                "01:00:120:00",
+                "01:02:00:00",
+            ),
+            TestCase(
+                "01:120:00:00",
+                "03:00:00:00",
+            ),
         ]
 
         for case in cases:
             with self.subTest(f"{case.str_in} -> {case.str_out}"):
-                tc = vtc.Timecode(case.str_in, vtc.RATE.F24)
+                tc = vtc.Timecode(case.str_in, rate=vtc.RATE.F24)
                 self.assertEqual(case.str_out, tc.timecode)
 
-    def test_parse_unsupported_type(self) -> None:
+    def test_partial_timecodes(self) -> None:
+        class TestCase(NamedTuple):
+            str_in: str
+            str_out: str
+
+        cases: List[TestCase] = [
+            TestCase(
+                "1:02:03:04",
+                "01:02:03:04",
+            ),
+            TestCase(
+                "02:03:04",
+                "00:02:03:04",
+            ),
+            TestCase(
+                "2:03:04",
+                "00:02:03:04",
+            ),
+            TestCase(
+                "03:04",
+                "00:00:03:04",
+            ),
+            TestCase(
+                "3:04",
+                "00:00:03:04",
+            ),
+            TestCase(
+                "04",
+                "00:00:00:04",
+            ),
+            TestCase(
+                "4",
+                "00:00:00:04",
+            ),
+            TestCase(
+                "1:2:3:4",
+                "01:02:03:04",
+            ),
+        ]
+
+        for case in cases:
+            with self.subTest(f"{case.str_in} -> {case.str_out}"):
+                tc = vtc.Timecode(case.str_in, rate=vtc.RATE.F24)
+                self.assertEqual(case.str_out, tc.timecode)
+
+    def test_partial_runtime(self) -> None:
+        class TestCase(NamedTuple):
+            str_in: str
+            str_out: str
+
+        cases: List[TestCase] = [
+            TestCase(
+                "1:02:03.5",
+                "01:02:03:12",
+            ),
+            TestCase(
+                "02:03.5",
+                "00:02:03:12",
+            ),
+            TestCase(
+                "2:03.5",
+                "00:02:03:12",
+            ),
+            TestCase(
+                "03.5",
+                "00:00:03:12",
+            ),
+            TestCase(
+                "3.5",
+                "00:00:03:12",
+            ),
+            TestCase(
+                "0.5",
+                "00:00:00:12",
+            ),
+            TestCase(
+                "1:2:3.5",
+                "01:02:03:12",
+            ),
+        ]
+
+        for case in cases:
+            with self.subTest(f"{case.str_in} -> {case.str_out}"):
+                tc = vtc.Timecode(case.str_in, rate=vtc.RATE.F24)
+                self.assertEqual(case.str_out, tc.timecode)
+
+    def test_parse_from_other(self) -> None:
+        """Tests instantiating one Timecode value from another."""
+        tc1 = vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98)
+        tc2 = vtc.Timecode(tc1, rate=None)
+
+        self.assertEqual(tc1, tc2)
+
+    def test_error_parse_unsupported_type(self) -> None:
         """tests error for trying to parse an unsupported type."""
         with self.assertRaises(TypeError) as caught:
-            vtc.Timecode(dict(), vtc.RATE.F24)  # type: ignore
+            vtc.Timecode(dict(), rate=vtc.RATE.F24)  # type: ignore
 
         self.assertEqual(
             "unsupported type for Timecode conversion: <class 'dict'>",
             str(caught.exception),
         )
 
-    def test_parse_bad_string(self) -> None:
+    def test_error_parse_bad_string(self) -> None:
         """tests error for attempting to parse an unknown string pattern"""
         with self.assertRaises(ValueError) as caught:
-            vtc.Timecode("notatimecode", vtc.RATE.F24)  # type: ignore
+            vtc.Timecode("notatimecode", rate=vtc.RATE.F24)  # type: ignore
 
         self.assertEqual(
             "'notatimecode' is not a recognized timecode format",
             str(caught.exception),
         )
 
-    def test_invalid_drop_frame_value(self) -> None:
+    def test_error_invalid_drop_frame_value(self) -> None:
         """tests error for trying to parse an invalid drop-frame value"""
         with self.assertRaises(ValueError) as caught:
-            vtc.Timecode("00:01:00:00", vtc.RATE.F29_97_DF)  # type: ignore
+            vtc.Timecode("00:01:00:00", rate=vtc.RATE.F29_97_DF)  # type: ignore
 
         self.assertEqual(
             "drop-frame tc cannot have a frames value of 0 on minutes not divisible by "
             "10",
             str(caught.exception),
+        )
+
+    def test_error_on_class_with_rate(self) -> None:
+        with self.assertRaises(ValueError) as caught:
+            tc = vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98)
+            tc2 = vtc.Timecode(tc, rate=vtc.RATE.F23_98)
+
+        self.assertEqual(
+            "rate must be None if src is vtc.Timecode. To rebase Timecode, use"
+            "vtc.Timecode.rebase",
+            str(caught.exception),
+            "error message",
+        )
+
+    def test_error_none_framerate(self) -> None:
+        with self.assertRaises(ValueError) as caught:
+            vtc.Timecode("01:00:00:00", rate=None)
+
+        self.assertEqual(
+            "rate must be set for all Timecode src types except vtc.Timecode",
+            str(caught.exception),
+            "error message",
         )
 
     def test_parse_timeline_tc(self) -> None:
@@ -369,23 +500,23 @@ class TestParse(unittest.TestCase):
 
             with self.subTest(sub_name):
                 if source is ParseTCCase.Source.FRAC:
-                    tc = vtc.Timecode(case.frac, case.rate)
+                    tc = vtc.Timecode(case.frac, rate=case.rate)
                 elif source is ParseTCCase.Source.TIMECODE:
-                    tc = vtc.Timecode(case.timecode, case.rate)
+                    tc = vtc.Timecode(case.timecode, rate=case.rate)
                 elif source is ParseTCCase.Source.FRAMES:
-                    tc = vtc.Timecode(case.frames, case.rate)
+                    tc = vtc.Timecode(case.frames, rate=case.rate)
                 elif source is ParseTCCase.Source.SECONDS:
-                    tc = vtc.Timecode(case.seconds, case.rate)
+                    tc = vtc.Timecode(case.seconds, rate=case.rate)
                 elif source is ParseTCCase.Source.FLOAT:
-                    tc = vtc.Timecode(float(case.seconds), case.rate)
+                    tc = vtc.Timecode(float(case.seconds), rate=case.rate)
                 elif source is ParseTCCase.Source.RUNTIME:
-                    tc = vtc.Timecode(case.runtime, case.rate)
+                    tc = vtc.Timecode(case.runtime, rate=case.rate)
                 elif source is ParseTCCase.Source.PPRO_TICKS:
                     if case.ppro_ticks == -1:
                         continue
-                    tc = vtc.Timecode(case.ppro_ticks, case.rate)
+                    tc = vtc.Timecode(case.ppro_ticks, rate=case.rate)
                 elif source is ParseTCCase.Source.FEET_AND_FRAMES:
-                    tc = vtc.Timecode(case.feet_and_frames, case.rate)
+                    tc = vtc.Timecode(case.feet_and_frames, rate=case.rate)
                 else:
                     raise RuntimeError("source not known for test case")
 
@@ -394,7 +525,7 @@ class TestParse(unittest.TestCase):
                     tc.timecode,
                     msg=f"parsed timecode expected with rate {repr(tc.rate)}",
                 )
-                self.assertEqual(case.frac, tc.frac, "parsed rational expected")
+                self.assertEqual(case.frac, tc.rational, "parsed rational expected")
                 self.assertEqual(
                     case.frames,
                     tc.frames,
@@ -431,7 +562,10 @@ class TestParse(unittest.TestCase):
                 if case.ppro_ticks != -1:
                     self.assertEqual(
                         case.ppro_ticks_xml_raw,
-                        vtc.Timecode(case.frames_xml_raw, case.rate).premiere_ticks,
+                        vtc.Timecode(
+                            case.frames_xml_raw,
+                            rate=case.rate,
+                        ).premiere_ticks,
                         (
                             f"raw premiere ticks expected from frames: "
                             f"{case.frames_xml_raw}",
@@ -466,118 +600,118 @@ class TestMagicMethods(unittest.TestCase):
         cases: List[TestCase] = [
             # 24 FPS ----------------------------------------
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
-                tc2=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
+                tc2=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
-                tc2=vtc.Timecode("00:59:59:24", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
+                tc2=vtc.Timecode("00:59:59:24", rate=vtc.RATE.F24),
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
-                tc2=vtc.Timecode("02:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
+                tc2=vtc.Timecode("02:00:00:00", rate=vtc.RATE.F24),
                 eq=False,
                 lt=True,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
-                tc2=vtc.Timecode("01:00:00:01", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
+                tc2=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F24),
                 eq=False,
                 lt=True,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
-                tc2=vtc.Timecode("00:59:59:23", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
+                tc2=vtc.Timecode("00:59:59:23", rate=vtc.RATE.F24),
                 eq=False,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 tc2=86400,
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 tc2=86399,
                 eq=False,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 tc2=fractions.Fraction(3600, 1),
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 tc2=3600.0,
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 tc2=decimal.Decimal("3600.0"),
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 tc2=fractions.Fraction(3600, 1),
                 eq=True,
                 lt=False,
             ),
             # 23.98 --------------------------------------------
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 tc2=decimal.Decimal("3603.6"),
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 tc2=3603.6,
                 eq=True,
                 lt=False,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
-                tc2=vtc.Timecode("01:00:00:01", vtc.RATE.F23_98),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
+                tc2=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F23_98),
                 eq=False,
                 lt=True,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 tc2=86401,
                 eq=False,
                 lt=True,
             ),
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
-                tc2=vtc.Timecode(86401, vtc.RATE.F23_98),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
+                tc2=vtc.Timecode(86401, rate=vtc.RATE.F23_98),
                 eq=False,
                 lt=True,
             ),
             TestCase(
-                tc1=vtc.Timecode("00:00:00:00", vtc.RATE.F23_98),
-                tc2=vtc.Timecode("02:00:00:00", vtc.RATE.F23_98),
+                tc1=vtc.Timecode("00:00:00:00", rate=vtc.RATE.F23_98),
+                tc2=vtc.Timecode("02:00:00:00", rate=vtc.RATE.F23_98),
                 eq=False,
                 lt=True,
             ),
             TestCase(
-                tc1=vtc.Timecode("00:00:00:00", vtc.RATE.F23_98),
-                tc2=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc1=vtc.Timecode("00:00:00:00", rate=vtc.RATE.F23_98),
+                tc2=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 eq=False,
                 lt=True,
             ),
             # Mixed ---------------------------------------------
             TestCase(
-                tc1=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
-                tc2=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
+                tc2=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 eq=False,
                 lt=False,
             ),
@@ -662,7 +796,7 @@ class TestMagicMethods(unittest.TestCase):
         other type
         """
         self.assertNotEqual(
-            vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+            vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
             dict(),
             "unsupported type not equal",
         )
@@ -677,14 +811,14 @@ class TestMagicMethods(unittest.TestCase):
         cases: List[TestCase] = [
             TestCase(
                 tcs_in=[
-                    vtc.Timecode("00:01:00:00", vtc.RATE.F23_98),
-                    vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
-                    vtc.Timecode("00:00:10:00", vtc.RATE.F23_98),
+                    vtc.Timecode("00:01:00:00", rate=vtc.RATE.F23_98),
+                    vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
+                    vtc.Timecode("00:00:10:00", rate=vtc.RATE.F23_98),
                 ],
                 tcs_out=[
-                    vtc.Timecode("00:00:10:00", vtc.RATE.F23_98),
-                    vtc.Timecode("00:01:00:00", vtc.RATE.F23_98),
-                    vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                    vtc.Timecode("00:00:10:00", rate=vtc.RATE.F23_98),
+                    vtc.Timecode("00:01:00:00", rate=vtc.RATE.F23_98),
+                    vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 ],
             )
         ]
@@ -704,54 +838,54 @@ class TestMagicMethods(unittest.TestCase):
 
         cases: List[TestCase] = [
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 multiplier=2,
-                expected=vtc.Timecode("02:00:00:00", vtc.RATE.F24),
+                expected=vtc.Timecode("02:00:00:00", rate=vtc.RATE.F24),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 multiplier=2,
-                expected=vtc.Timecode("02:00:00:00", vtc.RATE.F23_98),
+                expected=vtc.Timecode("02:00:00:00", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 multiplier=1.5,
-                expected=vtc.Timecode("01:30:00:00", vtc.RATE.F24),
+                expected=vtc.Timecode("01:30:00:00", rate=vtc.RATE.F24),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 multiplier=1.5,
-                expected=vtc.Timecode("01:30:00:00", vtc.RATE.F23_98),
+                expected=vtc.Timecode("01:30:00:00", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 multiplier=fractions.Fraction(3, 2),
-                expected=vtc.Timecode("01:30:00:00", vtc.RATE.F24),
+                expected=vtc.Timecode("01:30:00:00", rate=vtc.RATE.F24),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 multiplier=fractions.Fraction(3, 2),
-                expected=vtc.Timecode("01:30:00:00", vtc.RATE.F23_98),
+                expected=vtc.Timecode("01:30:00:00", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 multiplier=decimal.Decimal("1.5"),
-                expected=vtc.Timecode("01:30:00:00", vtc.RATE.F24),
+                expected=vtc.Timecode("01:30:00:00", rate=vtc.RATE.F24),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 multiplier=decimal.Decimal("1.5"),
-                expected=vtc.Timecode("01:30:00:00", vtc.RATE.F23_98),
+                expected=vtc.Timecode("01:30:00:00", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 multiplier=0.5,
-                expected=vtc.Timecode("00:30:00:00", vtc.RATE.F24),
+                expected=vtc.Timecode("00:30:00:00", rate=vtc.RATE.F24),
             ),
             TestCase(
-                tc_in=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                tc_in=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 multiplier=0.5,
-                expected=vtc.Timecode("00:30:00:00", vtc.RATE.F23_98),
+                expected=vtc.Timecode("00:30:00:00", rate=vtc.RATE.F23_98),
             ),
         ]
 
@@ -773,54 +907,54 @@ class TestMagicMethods(unittest.TestCase):
 
         cases: List[TestCase] = [
             TestCase(
-                source=vtc.Timecode("01:00:00:00", vtc.RATE.F24),
+                source=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
                 divisor=2,
-                expected_dividend=vtc.Timecode("00:30:00:00", vtc.RATE.F24),
-                expected_modulo=vtc.Timecode("00:00:00:00", vtc.RATE.F24),
+                expected_dividend=vtc.Timecode("00:30:00:00", rate=vtc.RATE.F24),
+                expected_modulo=vtc.Timecode("00:00:00:00", rate=vtc.RATE.F24),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:00", vtc.RATE.F23_98),
+                source=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
                 divisor=2,
-                expected_dividend=vtc.Timecode("00:30:00:00", vtc.RATE.F23_98),
-                expected_modulo=vtc.Timecode("00:00:00:00", vtc.RATE.F23_98),
+                expected_dividend=vtc.Timecode("00:30:00:00", rate=vtc.RATE.F23_98),
+                expected_modulo=vtc.Timecode("00:00:00:00", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:01", vtc.RATE.F24),
+                source=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F24),
                 divisor=2,
-                expected_dividend=vtc.Timecode("00:30:00:00", vtc.RATE.F24),
-                expected_modulo=vtc.Timecode("00:00:00:01", vtc.RATE.F24),
+                expected_dividend=vtc.Timecode("00:30:00:00", rate=vtc.RATE.F24),
+                expected_modulo=vtc.Timecode("00:00:00:01", rate=vtc.RATE.F24),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:01", vtc.RATE.F23_98),
+                source=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F23_98),
                 divisor=2,
-                expected_dividend=vtc.Timecode("00:30:00:00", vtc.RATE.F23_98),
-                expected_modulo=vtc.Timecode("00:00:00:01", vtc.RATE.F23_98),
+                expected_dividend=vtc.Timecode("00:30:00:00", rate=vtc.RATE.F23_98),
+                expected_modulo=vtc.Timecode("00:00:00:01", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:01", vtc.RATE.F24),
+                source=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F24),
                 divisor=4,
-                expected_dividend=vtc.Timecode("00:15:00:00", vtc.RATE.F24),
-                expected_modulo=vtc.Timecode("00:00:00:01", vtc.RATE.F24),
+                expected_dividend=vtc.Timecode("00:15:00:00", rate=vtc.RATE.F24),
+                expected_modulo=vtc.Timecode("00:00:00:01", rate=vtc.RATE.F24),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:01", vtc.RATE.F23_98),
+                source=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F23_98),
                 divisor=4,
-                expected_dividend=vtc.Timecode("00:15:00:00", vtc.RATE.F23_98),
-                expected_modulo=vtc.Timecode("00:00:00:01", vtc.RATE.F23_98),
+                expected_dividend=vtc.Timecode("00:15:00:00", rate=vtc.RATE.F23_98),
+                expected_modulo=vtc.Timecode("00:00:00:01", rate=vtc.RATE.F23_98),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:01", vtc.RATE.F24),
+                source=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F24),
                 divisor=1.5,
-                expected_dividend=vtc.Timecode("00:40:00:00", vtc.RATE.F24),
-                expected_modulo=vtc.Timecode("00:00:00:01", vtc.RATE.F24),
-                expected_truediv=vtc.Timecode("00:40:00:01", vtc.RATE.F24),
+                expected_dividend=vtc.Timecode("00:40:00:00", rate=vtc.RATE.F24),
+                expected_modulo=vtc.Timecode("00:00:00:01", rate=vtc.RATE.F24),
+                expected_truediv=vtc.Timecode("00:40:00:01", rate=vtc.RATE.F24),
             ),
             TestCase(
-                source=vtc.Timecode("01:00:00:01", vtc.RATE.F23_98),
+                source=vtc.Timecode("01:00:00:01", rate=vtc.RATE.F23_98),
                 divisor=1.5,
-                expected_dividend=vtc.Timecode("00:40:00:00", vtc.RATE.F23_98),
-                expected_modulo=vtc.Timecode("00:00:00:01", vtc.RATE.F23_98),
-                expected_truediv=vtc.Timecode("00:40:00:01", vtc.RATE.F23_98),
+                expected_dividend=vtc.Timecode("00:40:00:00", rate=vtc.RATE.F23_98),
+                expected_modulo=vtc.Timecode("00:00:00:01", rate=vtc.RATE.F23_98),
+                expected_truediv=vtc.Timecode("00:40:00:01", rate=vtc.RATE.F23_98),
             ),
         ]
 
@@ -879,7 +1013,7 @@ class TestMagicMethods(unittest.TestCase):
         neg = -tc
 
         self.assertEqual("-01:00:04:14", neg.timecode, "timecode is negative")
-        self.assertEqual(-tc.frac, neg.frac, "fraction is negative")
+        self.assertEqual(-tc.rational, neg.rational, "fraction is negative")
 
     def test_abs(self) -> None:
         """Tests __neg__"""
@@ -904,13 +1038,13 @@ class TestMagicMethods(unittest.TestCase):
             with self.subTest(test_name):
                 abs_tc = abs(case.tc_in)
 
-                self.assertGreater(abs_tc.frac, 0, "value is greater than zero")
+                self.assertGreater(abs_tc.rational, 0, "value is greater than zero")
                 self.assertEqual(
                     case.abs.timecode,
                     abs_tc.timecode,
                     "timecode is expected",
                 )
-                self.assertEqual(case.abs.frac, abs_tc.frac, "frac is expected")
+                self.assertEqual(case.abs.rational, abs_tc.rational, "frac is expected")
 
     def test_timeline_addition(self) -> None:
         """
@@ -927,34 +1061,34 @@ class TestMagicMethods(unittest.TestCase):
         seq_framerate = vtc.Framerate(
             MANY_BASIC_EDITS_DATA.start_time.timebase,
             ntsc=MANY_BASIC_EDITS_DATA.start_time.ntsc,
-            drop_frame=MANY_BASIC_EDITS_DATA.start_time.drop_frame,
+            dropframe=MANY_BASIC_EDITS_DATA.start_time.drop_frame,
         )
 
-        rec_total_duration = vtc.Timecode(0, seq_framerate)
+        rec_total_duration = vtc.Timecode(0, rate=seq_framerate)
         rec_tc_out = vtc.Timecode(
             MANY_BASIC_EDITS_DATA.events[0].record_in.timecode,
-            seq_framerate,
+            rate=seq_framerate,
         )
 
-        src_total_duration = vtc.Timecode(rec_total_duration, rec_total_duration.rate)
+        src_total_duration = rec_total_duration
         src_tc_out = vtc.Timecode(
             MANY_BASIC_EDITS_DATA.events[0].record_in.timecode,
-            seq_framerate,
+            rate=seq_framerate,
         )
 
         for i, event in enumerate(MANY_BASIC_EDITS_DATA.events):
             with self.subTest(f"Event {i} Parse"):
                 rec_in_info = ParseTCCase.from_table_info(event.record_in)
-                rec_in = vtc.Timecode(rec_in_info.timecode, rec_in_info.rate)
+                rec_in = vtc.Timecode(rec_in_info.timecode, rate=rec_in_info.rate)
 
                 rec_out_info = ParseTCCase.from_table_info(event.record_out)
-                rec_out = vtc.Timecode(rec_out_info.timecode, rec_out_info.rate)
+                rec_out = vtc.Timecode(rec_out_info.timecode, rate=rec_out_info.rate)
 
                 src_in_info = ParseTCCase.from_table_info(event.source_in)
-                src_in = vtc.Timecode(src_in_info.timecode, src_in_info.rate)
+                src_in = vtc.Timecode(src_in_info.timecode, rate=src_in_info.rate)
 
                 src_out_info = ParseTCCase.from_table_info(event.source_out)
-                src_out = vtc.Timecode(src_out_info.timecode, src_out_info.rate)
+                src_out = vtc.Timecode(src_out_info.timecode, rate=src_out_info.rate)
 
             with self.subTest(f"Event {i} Source Length"):
                 src_total_duration, src_tc_out = self._check_running_event(
@@ -1010,7 +1144,7 @@ class TestMagicMethods(unittest.TestCase):
                 source_value = event_in.timecode
                 event_len = event_out - source_value
             elif source is ParseTCCase.Source.FRAC:
-                source_value = event_in.frac
+                source_value = event_in.rational
                 event_len = event_out - source_value
             elif source is ParseTCCase.Source.FRAMES:
                 source_value = event_in.frames
@@ -1048,8 +1182,8 @@ class TestMagicMethods(unittest.TestCase):
                 this_total = current_total + event_len.timecode
                 new_out = current_tc_out + event_len.timecode
             elif source is ParseTCCase.Source.FRAC:
-                this_total = current_total + event_len.frac
-                new_out = current_tc_out + event_len.frac
+                this_total = current_total + event_len.rational
+                new_out = current_tc_out + event_len.rational
             elif source is ParseTCCase.Source.FRAMES:
                 this_total = current_total + event_len.frames
                 new_out = current_tc_out + event_len.frames
@@ -1090,7 +1224,7 @@ class TestTimecodeMethods(unittest.TestCase):
 
     def test_rebase(self) -> None:
         """test_rebase tests rebasing a timecode in another framerate."""
-        timecode = vtc.Timecode("01:00:00:00", vtc.RATE.F24)
+        timecode = vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24)
         rebased = timecode.rebase(vtc.RATE.F48)
 
         self.assertEqual("00:30:00:00", rebased.timecode, "new tc expected")
