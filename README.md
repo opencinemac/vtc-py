@@ -195,6 +195,7 @@ True
 # We can also rebase the frames using a new framerate!
 >>> tc.rebase(vtc.RATE.F23_98)
 [02:00:00:00 @ [23.98 NTSC]]
+
 ```
 
 
@@ -223,7 +224,7 @@ Getting Started
 ===============
 
 For full documentation:
-[read the docs](https://opencinemac.github.io/occlib-py/).
+[read the docs](https://opencinemac.github.io/vtc-py/).
 
 For library development guide, 
 [read the docs](https://opencinemac.github.io/occlib-py/).

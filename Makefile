@@ -27,7 +27,6 @@ clean:
 .PHONY: test
 test:
 	-pytest
-	-python setup.py build_sphinx -b doctest
 	sleep 1
 	open ./zdevelop/tests/_reports/coverage/index.html
 	open ./zdevelop/tests/_reports/test_results.html
