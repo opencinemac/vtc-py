@@ -50,10 +50,9 @@ add_module_names = False
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
     "sphinx_autodoc_typehints",
 ]
 
@@ -202,3 +201,4 @@ todo_include_todos = True
 add_module_names = False
 autoclass_content = "both"
 autodoc_member_order = "groupwise"
+always_document_param_types = True
