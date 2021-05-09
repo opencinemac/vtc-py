@@ -1,9 +1,13 @@
 Overview
 ========
 
-``vtc-py`` is maintained by an ex-assistant editor. It aims to offer a powerful, but
-ergonomic API for writing scripts and software involving video timecode with minimal
-fuss.
+``vtc-py`` is inspired by years of scripting workflow solutions in a Hollywood cutting
+room. It is designed to support both quick, one-off scripts and higher level production
+code.
+
+vtc aims to capture all the ways in which timecode is used throughout the industry, so 
+users can spend more time on their workflow logc, and less time handling the 
+corner-cases of parsing and calculating timecode.
 
 Features
 ========
