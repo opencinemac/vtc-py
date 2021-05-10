@@ -19,6 +19,10 @@
 
    ./api.rst
 
+.. image:: _static/logo1.svg
+    :width: 40%
+    :align: center
+
 Overview
 ========
 

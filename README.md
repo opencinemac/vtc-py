@@ -1,3 +1,23 @@
+<h1 align="center">vtc-py</h1>
+<p align="center">
+    <img height=150 class="heightSet" align="center" src="https://raw.githubusercontent.com/peake100/rogerRabbit-go/master/zdocs/source/_static/logo1.svg"/>
+</p>
+<p align="center">A SMPTE Timecode Library for Python</p>
+<p align="center">
+    <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_apis/build/status/occlib-py?repoName=opencinemac%2Fvtc-py&branchName=dev" alt="click to see build pipeline"></a>
+    <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://img.shields.io/azure-devops/tests/peake100/Open%20Cinema%20Collective/12/dev?compact_message" alt="click to see build pipeline"></a>
+    <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://img.shields.io/azure-devops/coverage/peake100/Open%20Cinema%20Collective/12/dev?compact_message" alt="click to see build pipeline"></a>
+</p>
+<p align="center">
+    <a href="https://codeclimate.com/github/opencinemac/vtc-py/maintainability"><img src="https://api.codeclimate.com/v1/badges/0d196b40c063b040cd21/maintainability" /></a>
+    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+</p>
+<p align="center">
+    <a href="https://github.com/opencinemac/vtc-py/"><img src="https://img.shields.io/pypi/pyversions/vtc" alt="Documentation"></a>
+    <a href="https://pypi.org/project/vtc/"><img src="https://badge.fury.io/py/vtc.svg" alt="PyPI version" height="18"></a>
+    <a href="https://opencinemac.github.io/vtc-py/"><img src="https://img.shields.io/badge/docs-github.io-blue" alt="Documentation"></a>
+</p>
+
 Overview
 ========
 
@@ -233,13 +253,12 @@ For full documentation:
 For library development guide, 
 [read the docs](https://opencinemac.github.io/occlib-py/).
 
-Prerequisites
-=============
-
-Python 3.8+
-
 Authors
 =======
 
 * **Billy Peake** - *Initial work*
 
+Attributions
+============
+
+<div>Logo made by <a href="" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
