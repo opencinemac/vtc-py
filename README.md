@@ -25,8 +25,8 @@ Overview
 room. It is designed to support both quick, one-off scripts and higher level production
 code.
 
-vtc aims to capture all the ways in which timecode is used throughout the industry, so 
-users can spend more time on their workflow logc, and less time handling the 
+vtc aims to capture all the ways in which timecode is used throughout the industry so 
+users can spend more time on their workflow logic, and less time handling the 
 corner-cases of parsing and calculating timecode.
 
 Features

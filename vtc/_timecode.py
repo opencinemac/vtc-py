@@ -191,6 +191,10 @@ class Timecode:
 
     @property
     def sections(self) -> TimecodeSections:
+        """
+        sections returns the sections of a timecode as ints for callers to
+        format/work on as desired.
+        """
         rate = self._rate
         frames_number = abs(self.frames)
 
@@ -321,6 +325,10 @@ class Timecode:
         """
         rebase re-calculates the timecode at a new frame rate based on the frame-count
         value of the current timecode.
+
+        :param new_rate: the new rate to rebase at.
+
+        :returns: The new, rebased timecode.
         """
         return Timecode(self.frames, rate=new_rate)
 

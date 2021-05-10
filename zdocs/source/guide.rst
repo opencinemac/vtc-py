@@ -2,45 +2,44 @@ Intro
 -----
 
 vtc is built to have a simple, scriptable interface without sacrificing features or
-limiting the types of timecode representations or frame rates that one can work with.
+correctness.
 
-Let's walk through in more detail, how vtc implements sane defaults, how to override
-them, and the inferences vtc makes with incomplete information to support quick
-scripting.
+Let's walk through the assumptions vtc makes to offer a fast scripting API, and how
+to override them.
 
-What is timecode?
------------------
+Timecode: A History
+-------------------
 
-But first, let's make a brief introduction of what timecode is. If you're already
-familiar with timecode, it's history, and it's flavors, feel free to skip this section.
+But first: what is timecode?
 
-Back in the days of film a running strip of numbers ran along the edge of the film to
-uniquely identify each frame, called `keycode <https://en.wikipedia.org/wiki/Keykode>`_.
+If you're already familiar with timecode, it's history, and it's flavors, feel free to
+skip this section.
+
+Back in the days of film, a running strip of numbers ran along the edge of the film
+stock to uniquely identify each frame, called
+`keycode <https://en.wikipedia.org/wiki/Keykode>`_.
 
 Keycode was essential to the film editing process. The raw negative of a film is
 irreplaceable: you loose quality each time you make a copy. Editing film is necessarily
 a `destructive process <https://nofilmschool.com/2017/06/editing-on-a-flatbed>`_, and
-often required multiple iterations. It would be just a tad nerve wracking to take a pair
-of scissors and some glue to the one-of-a-kind film that came straight out of the camera
-on set, and running it over and over through a flatbed.
+often required multiple iterations. It would be just a tad nerve-wracking to take a pair
+of scissors and some glue to the one-of-a-kind film reels straight out of the camera
+on set, then running it over and over through a flatbed.
 
 To avoid potential disaster, editors made their cut of the film using copies of the
-raw negative. This was called a `work print <https://en.wikipedia.org/wiki/Workprint>`_,
-and allowed the editor to work without fear of sinking a project from slicing and
-dicing, and wearing at the film.
+raw negative, called a `work print <https://en.wikipedia.org/wiki/Workprint>`_, allowing
+the editor to work without fear of sinking a project from slicing, dicing, and wearing
+at the film.
 
-When the edit was complete, it was necessary to know *exactly where* the edits had been
-made, so it could be recreated with the raw negative.
-
-To accomplish this, a *cut list* would be written out, with the exact reels and keycodes
-for every cut, which would then be used to make an exact duplicate of the editor's work
-print with the mint condition raw negative.
+When the edit was complete, it was necessary to know *exactly* where the edits had been
+made, so it could be recreated with the raw negative for finishing. A *cut list* would
+be written out, with the exact reels and keycodes for every cut, and would be used to
+make an exact duplicate of the editor's work print with the mint condition raw negative.
 
 In video and digital filmmaking, the same approach is used. Massive RAW files from a
 RED, ARRI, Sony, or other cinema camera are rendered down to more manageable files an
-editor's machine won't choke on. Once the edit is complete, the raw files are
-re-assembled using a digital cut list on a powerful machine for finishing out the film
-in a program like Baselight.
+Editor's machine won't choke on. Once the edit is complete, the raw files are
+re-assembled using a digital cutlist on a powerful machine for finishing out the film.
 
 In film, we referenced *keycode* to know exactly what frame was being displayed on
 screen at any given time. In digital video, we reference the *timecode* of a given
@@ -94,6 +93,7 @@ Non-whole-frame rates are interpreted as being NTSC by default:
 
     By default, non-whole framerates are rounded, multiplied by 1000, then put over a
     denominator of 1001 to make them proper NTSC framerates, regardless of their value.
+
     23.98 will be converted to 24000/1001, but so will 23.5.
 
 We can disable interpretation of non-whole framerates as NTSC by setting ``ntsc=False``
@@ -219,6 +219,8 @@ different framerates.
 
 Adobe Premiere Pro Ticks
 ########################
+
+**property:** :func:`vtc.Timecode.premiere_ticks`
 
 **what it is:** internally, Adobe Premiere Pro uses ticks to divide up a second, and
 keep track of how far into that second we are. There are 254016000000 ticks in a second,

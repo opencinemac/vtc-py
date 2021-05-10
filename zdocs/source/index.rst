@@ -30,8 +30,8 @@ Overview
 room. It is designed to support both quick, one-off scripts and higher level production
 code.
 
-vtc aims to capture all the ways in which timecode is used throughout the industry, so
-users can spend more time on their workflow logc, and less time handling the
+vtc aims to capture all the ways in which timecode is used throughout the industry so
+users can spend more time on their workflow logic, and less time handling the
 corner-cases of parsing and calculating timecode.
 
 Features
@@ -40,7 +40,7 @@ Features
 - SMPTE Conventions:
     - [X] NTSC
     - [X] Drop-Frame
-    - [-] Interlaced timecode (not implemented)
+    - [ ] Interlaced timecode (not implemented)
 - Timecode Representations:
     - Timecode       | '01:00:00:00'
     - Frames         | 86400
@@ -50,9 +50,9 @@ Features
     - Feet+Frames    | '5400+00'
 
         - [X] 35mm, 4-perf
-        - [-] 35mm, 3-perf
-        - [-] 35mm, 2-perf
-        - [-] 16mm
+        - [ ] 35mm, 3-perf
+        - [ ] 35mm, 2-perf
+        - [ ] 16mm
 
     - Premiere Ticks | 15240960000000
 - Operations:
@@ -228,8 +228,8 @@ Goals
 =====
 
     - Parse and fetch all Timecode representations.
-    - A clean, Pythonic API
-    - Support all operations that make sense for timecode.
+    - A clean, pythonic API
+    - Support all sensible operations.
     - Sane shortcuts for scripting
 
 Non-Goals
