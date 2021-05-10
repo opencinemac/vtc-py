@@ -18,8 +18,8 @@ from ._consts import (
 )
 
 
-TimecodeSource = Union[
-    "Timecode",
+# Union type detailing what types a Timecode can be parsed from.
+_TimecodeParseSource = Union[
     str,
     int,
     float,
@@ -27,13 +27,9 @@ TimecodeSource = Union[
     decimal.Decimal,
     PremiereTicks,
 ]
-"""
-TimecodeSource is the types of source values a timecode can be created from. See
-documentation for details on how different value types as converted.
-"""
 
 
-def _parse(src: TimecodeSource, rate: Framerate) -> fractions.Fraction:
+def _parse(src: _TimecodeParseSource, rate: Framerate) -> fractions.Fraction:
     """_parse converts an input value and rate into rational time."""
     if isinstance(src, str):
         return _parse_str(src, rate)
@@ -230,8 +226,3 @@ def _rational_to_frames(seconds: fractions.Fraction, rate: Framerate) -> int:
 
     # Otherwise lets convert to a float, then round.
     return round(float(frac_frames))
-
-
-type_helper = False
-if type_helper:
-    from ._timecode import Timecode

@@ -11,14 +11,21 @@ from ._consts import (
     _SECONDS_PER_HOUR,
 )
 from ._timecode_sections import TimecodeSections
-from ._timecode_parsers import TimecodeSource, _parse, _rational_to_frames
+from ._timecode_parsers import _TimecodeParseSource, _parse, _rational_to_frames
 from ._timecode_dropframe import _frame_num_to_drop_frame_num
+
+
+TimecodeSource = Union[_TimecodeParseSource, "Timecode"]
+"""
+TimecodeSource is the types of source values a timecode can be created from. See
+documentation for details on how different value types as converted.
+"""
 
 
 class Timecode:
     def __init__(
         self,
-        src: "TimecodeSource",
+        src: TimecodeSource,
         *,
         rate: Optional[FramerateSource],
     ) -> None:
@@ -65,15 +72,12 @@ class Timecode:
             rate = src.rate
             src = src.rational
 
-        parse_rate = rate
-        if parse_rate is None:
-            if not isinstance(src, Timecode):
-                raise ValueError(
-                    "rate must be set for all Timecode src types except vtc.Timecode",
-                )
-            parse_rate = src.rate
+        if rate is None:
+            raise ValueError(
+                "rate must be set for all Timecode src types except vtc.Timecode",
+            )
 
-        self._rate: Framerate = Framerate(parse_rate)
+        self._rate: Framerate = Framerate(rate)
         self._value: fractions.Fraction = _parse(src, self._rate)
 
     def __repr__(self) -> str:
@@ -103,28 +107,28 @@ class Timecode:
         other_tc = _coerce_other(other, self._rate)
         return self._value == other_tc._value
 
-    def __lt__(self, other: "TimecodeSource") -> bool:
+    def __lt__(self, other: TimecodeSource) -> bool:
         other_tc = _coerce_other(other, self._rate)
         return self._value < other_tc._value
 
-    def __le__(self, other: "TimecodeSource") -> bool:
+    def __le__(self, other: TimecodeSource) -> bool:
         other_tc = _coerce_other(other, self._rate)
         return self._value <= other_tc._value
 
-    def __gt__(self, other: "TimecodeSource") -> bool:
+    def __gt__(self, other: TimecodeSource) -> bool:
         other_tc = _coerce_other(other, self._rate)
         return self._value > other_tc._value
 
-    def __ge__(self, other: "TimecodeSource") -> bool:
+    def __ge__(self, other: TimecodeSource) -> bool:
         other_tc = _coerce_other(other, self._rate)
         return self._value >= other_tc._value
 
-    def __add__(self, other: "TimecodeSource") -> "Timecode":
+    def __add__(self, other: TimecodeSource) -> "Timecode":
         other_tc = _coerce_other(other, self._rate)
         frac_value = self._value + other_tc._value
         return Timecode(frac_value, rate=self._rate)
 
-    def __sub__(self, other: "TimecodeSource") -> "Timecode":
+    def __sub__(self, other: TimecodeSource) -> "Timecode":
         other_tc = _coerce_other(other, self._rate)
         frac_value = self._value - other_tc._value
         return Timecode(frac_value, rate=self._rate)
