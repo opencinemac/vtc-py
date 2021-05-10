@@ -12,8 +12,9 @@ class Framerate:
         dropframe: bool = False,
     ) -> None:
         """
-        Framerate is the rate at which a video file's timecode is playing, measured in
-        frames-per-second (24/1 = 24 frames-per-second).
+        Framerate is the rate at which a video file frames are played back.
+
+        Framerate is measured in frames-per-second (24/1 = 24 frames-per-second).
 
         :param src: the source value to parse to a Framerate. src must conform to
             one of the following value types:
@@ -55,12 +56,7 @@ class Framerate:
         :param dropframe: Whether this is a drop-frame style timecode (only available
             for frame rates divisible by 30000/1001 like 29.97 and 59.94).
         """
-        if dropframe:
-            if ntsc is False:
-                raise ValueError(
-                    "ntsc must be [True] or [None] if drop_frame is [True]",
-                )
-            ntsc = True
+        dropframe, ntsc = _validate_dropframe_ntsc(ntsc, dropframe)
 
         self._value: fractions.Fraction
         self._dropframe = dropframe
@@ -70,33 +66,17 @@ class Framerate:
         self._value = _parse(src, ntsc)
         if isinstance(src, Framerate):
             self._dropframe = src.drop_frame
-            self._ntsc = src.ntsc
+            ntsc = src.ntsc
 
-        # If no explicit ntsc value was set, assume that values with a denominator of
-        # 1001 are ntsc.
-        if ntsc is None:
-            if self._value.denominator == 1001:
-                self._ntsc = True
-            else:
-                self._ntsc = False
-        else:
-            self._ntsc = ntsc
-
-        # Validate that drop-frame TC is cleanly divisible by 30000/1001. Drop-frame is
-        # not defined for any other timebases. Generally it is only allowed for 29.97
-        # and 59.94
-        if self._dropframe and self._value % fractions.Fraction(30000, 1001) != 0:
-            raise ValueError(
-                "drop_frame may only be true if framerate is divisible by "
-                "30000/1001 (29.97)"
-            )
+        self._ntsc = _infer_ntsc(self._value, ntsc)
+        _validate_drop_frame_value(self._value, self._dropframe)
 
     def __str__(self) -> str:
-        """Returns the framerate as a fractional string (ex: '24/1')"""
+        """Returns the framerate as a fractional string (ex: '24/1')."""
         return str(self._value)
 
     def __repr__(self) -> str:
-        """Returns formatted framerate information: (ex: '[24/1 fps NTSC]')"""
+        """Returns formatted framerate information: (ex: '[24/1 fps NTSC]')."""
         rate_value = str(round(float(self._value), 2)).rstrip("0").rstrip(".")
         value = f"[{rate_value}"
         if self._ntsc:
@@ -130,7 +110,7 @@ class Framerate:
 
     @property
     def ntsc(self) -> bool:
-        """Whether this is an NTSC-style time base (aka 23.98, 24000/1001, etc)"""
+        """Whether this is an NTSC-style time base (aka 23.98, 24000/1001, etc)."""
         return self._ntsc
 
     @property
@@ -139,7 +119,59 @@ class Framerate:
         return self._dropframe
 
 
-_DROP_FRAME_VALUES = (fractions.Fraction(30000, 1001), fractions.Fraction(60000, 1001))
+def _validate_dropframe_ntsc(
+    ntsc: Optional[bool],
+    dropframe: bool,
+) -> Tuple[bool, Optional[bool]]:
+    """
+    _validate_dropframe_ntsc validates that the drop frame and ntsc arguments are not
+    in conflict and returns adjusted ones.
+    """
+    if dropframe:
+        # If NTSC was explicitly set to False and dropframe was explicitly set to true
+        # then there is a conflict.
+        if ntsc is False:
+            raise ValueError(
+                "ntsc must be [True] or [None] if drop_frame is [True]",
+            )
+
+        # Otherwise if dropframe is true, NTSC must be set to true as well.
+        ntsc = True
+
+    return dropframe, ntsc
+
+
+def _infer_ntsc(value: fractions.Fraction, ntsc: Optional[bool]) -> bool:
+    """
+    _infer_ntsc looks at the parsed fraction value and infers if it should be considered
+    NTSC.
+    """
+    # If no explicit ntsc value was set, assume that values with a denominator of
+    # 1001 are ntsc.
+    if ntsc is None:
+        if value.denominator == 1001:
+            ntsc = True
+        else:
+            ntsc = False
+    else:
+        ntsc = ntsc
+
+    return ntsc
+
+
+def _validate_drop_frame_value(value: fractions.Fraction, dropframe: bool) -> None:
+    """
+    _validate_drop_frame_value validates that a framerate value with dropframe enabled
+    is a multiple of 30000/1001.
+    """
+    # Validate that drop-frame TC is cleanly divisible by 30000/1001. Drop-frame is
+    # not defined for any other timebases. Generally it is only allowed for 29.97
+    # and 59.94
+    if dropframe and value % fractions.Fraction(30000, 1001) != 0:
+        raise ValueError(
+            "drop_frame may only be true if framerate is divisible by "
+            "30000/1001 (29.97)"
+        )
 
 
 def _parse(src: "FramerateSource", ntsc: Optional[bool]) -> fractions.Fraction:
@@ -234,35 +266,35 @@ class _Rates:
     callers to use.
     """
 
+    # 23.98 fps NTSC.
     F23_98: Framerate = Framerate(23.98, ntsc=True)
-    """23.98 fps NTSC."""
 
+    # 24 fps.
     F24: Framerate = Framerate(24)
-    """24 fps."""
 
+    # 29.97 fps NTSC.
     F29_97_NDF: Framerate = Framerate(29.97, ntsc=True)
-    """29.97 fps NTSC."""
 
+    # 29.97 fps DROP FRAME.
     F29_97_DF: Framerate = Framerate(29.97, dropframe=True)
-    """29.97 fps DROP FRAME."""
 
+    # 30 fps NTSC.
     F30: Framerate = Framerate(30)
-    """30 fps NTSC."""
 
+    # 47.95 fps NTSC.
     F47_95: Framerate = Framerate(47.95, ntsc=True)
-    """47.95 fps NTSC"""
 
+    # 48 fps NTSC.
     F48: Framerate = Framerate(48)
-    """48 fps NTSC"""
 
+    # 59.94 fps NTSC.
     F59_94_NDF: Framerate = Framerate(59.94, ntsc=True)
-    """59.94 fps NTSC."""
 
+    # 59.94 fps NTSC DROP FRAME.
     F59_94_DF: Framerate = Framerate(59.94, dropframe=True)
-    """59.94 fps NTSC DROP FRAME."""
 
+    # 60 fps NTSC.
     F60: Framerate = Framerate(60)
-    """60 fps NTSC."""
 
 
 RATE: _Rates = _Rates()
