@@ -36,17 +36,31 @@ class ParseTCCase:
     feet_and_frames: str = ""
 
     class Source(enum.Enum):
+
+        """
+        Source is an enum for signaling what source value we should be parsing from.
+        """
+
+        # FRAC means parse from ParseTCCase.frac.
         FRAC = enum.auto()
+        # FRAMES means parse from ParseTCCase.frames.
         FRAMES = enum.auto()
+        # TIMECODE means parse from ParseTCCase.timecode.
         TIMECODE = enum.auto()
+        # SECONDS means parse from ParseTCCase.seconds.
         SECONDS = enum.auto()
+        # FLOAT means parse from float(ParseTCCase.seconds).
         FLOAT = enum.auto()
+        # RUNTIME means parse from ParseTCCase.runtime.
         RUNTIME = enum.auto()
+        # PPRO_TICKS means parse from ParseTCCase.ppro_ticks.
         PPRO_TICKS = enum.auto()
+        # FEET_AND_FRAMES means parse from ParseTCCase.feet_and_frames.
         FEET_AND_FRAMES = enum.auto()
 
     @classmethod
     def from_table_info(cls, event: TableTimecodeInfo) -> "ParseTCCase":
+        """from_table_info parses a new ParseTCCase from a TableTimecodeInfo."""
         return cls(
             rate=vtc.Framerate(
                 event.frame_rate_frac,
@@ -66,11 +80,11 @@ class ParseTCCase:
 
 
 class TestParse(unittest.TestCase):
-    """tests parsing timecodes."""
+
+    """Tests parsing timecodes."""
 
     def test_parse_timecode(self) -> None:
-        """test parsing and rendering a set of hand-written timecode representations."""
-
+        """Test parsing and rendering a set of hand-written timecode representations."""
         cases = [
             # 23.976 -----------------------------
             # ------------------------------------
@@ -274,7 +288,7 @@ class TestParse(unittest.TestCase):
             self._run_parse_case(case)
 
     def test_parse_overflows(self) -> None:
-        """tests that we parse timecodes with overflowed positions correctly"""
+        """Tests that we parse timecodes with overflowed positions correctly."""
 
         class TestCase(NamedTuple):
             str_in: str
@@ -325,6 +339,8 @@ class TestParse(unittest.TestCase):
                 self.assertEqual(case.str_out, tc.timecode)
 
     def test_partial_timecodes(self) -> None:
+        """Test that we can parse timecodes missing sections."""
+
         class TestCase(NamedTuple):
             str_in: str
             str_out: str
@@ -370,6 +386,8 @@ class TestParse(unittest.TestCase):
                 self.assertEqual(case.str_out, tc.timecode)
 
     def test_partial_runtime(self) -> None:
+        """Test that we can parse runtimes missing sections."""
+
         class TestCase(NamedTuple):
             str_in: str
             str_out: str
@@ -418,7 +436,7 @@ class TestParse(unittest.TestCase):
         self.assertEqual(tc1, tc2)
 
     def test_error_parse_unsupported_type(self) -> None:
-        """tests error for trying to parse an unsupported type."""
+        """Tests error for trying to parse an unsupported type."""
         with self.assertRaises(TypeError) as caught:
             vtc.Timecode(dict(), rate=vtc.RATE.F24)  # type: ignore
 
@@ -428,7 +446,7 @@ class TestParse(unittest.TestCase):
         )
 
     def test_error_parse_bad_string(self) -> None:
-        """tests error for attempting to parse an unknown string pattern"""
+        """Tests error for attempting to parse an unknown string pattern."""
         with self.assertRaises(ValueError) as caught:
             vtc.Timecode("notatimecode", rate=vtc.RATE.F24)  # type: ignore
 
@@ -438,7 +456,7 @@ class TestParse(unittest.TestCase):
         )
 
     def test_error_invalid_drop_frame_value(self) -> None:
-        """tests error for trying to parse an invalid drop-frame value"""
+        """Tests error for trying to parse an invalid drop-frame value."""
         with self.assertRaises(ValueError) as caught:
             vtc.Timecode("00:01:00:00", rate=vtc.RATE.F29_97_DF)  # type: ignore
 
@@ -449,9 +467,10 @@ class TestParse(unittest.TestCase):
         )
 
     def test_error_on_class_with_rate(self) -> None:
+        """Tests that we get an error when supplying a vtc.Timecode and rate."""
         with self.assertRaises(ValueError) as caught:
             tc = vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98)
-            tc2 = vtc.Timecode(tc, rate=vtc.RATE.F23_98)
+            vtc.Timecode(tc, rate=vtc.RATE.F23_98)
 
         self.assertEqual(
             "rate must be None if src is vtc.Timecode. To rebase Timecode, use"
@@ -461,6 +480,7 @@ class TestParse(unittest.TestCase):
         )
 
     def test_error_none_framerate(self) -> None:
+        """Tests that we get an error when no framerate can be found."""
         with self.assertRaises(ValueError) as caught:
             vtc.Timecode("01:00:00:00", rate=None)
 
@@ -472,7 +492,7 @@ class TestParse(unittest.TestCase):
 
     def test_parse_timeline_tc(self) -> None:
         """
-        tests parsing a series of timecode events from real CMX3600 and FCP7XML
+        Tests parsing a series of timecode events from real CMX3600 and FCP7XML
         cutlists.
 
         This should increase the confidence that our parsers are working correctly.
@@ -491,7 +511,7 @@ class TestParse(unittest.TestCase):
             self._run_parse_case(src_out, name=f"EVENT {str(i).zfill(3)} SRC OUT")
 
     def _run_parse_case(self, case: ParseTCCase, name: str = "") -> None:
-        """runs a test case for test_parse_timeline_tc or test_parse_timecode."""
+        """Runs a test case for test_parse_timeline_tc or test_parse_timecode."""
         for source in ParseTCCase.Source:
             sub_name = ""
             if name != "":
@@ -574,6 +594,7 @@ class TestParse(unittest.TestCase):
 
 
 class TestMagicMethods(unittest.TestCase):
+
     """TestMagicMethods tests our Timecode's dunder methods like __add__ and __lt__."""
 
     def test_compare(self) -> None:
@@ -792,8 +813,8 @@ class TestMagicMethods(unittest.TestCase):
 
     def test_compare_not_implemented(self) -> None:
         """
-        test that false is returned when comparison is not implemented by __eq__ for
-        other type
+        Tests that false is returned when comparison is not implemented by __eq__ for
+        other type.
         """
         self.assertNotEqual(
             vtc.Timecode("01:00:00:00", rate=vtc.RATE.F24),
@@ -802,7 +823,7 @@ class TestMagicMethods(unittest.TestCase):
         )
 
     def test_sort_timecodes(self) -> None:
-        """test that timecodes are sorted correctly through comparison operators."""
+        """Test that timecodes are sorted correctly through comparison operators."""
 
         class TestCase(NamedTuple):
             tcs_in: List[vtc.Timecode]
@@ -829,7 +850,7 @@ class TestMagicMethods(unittest.TestCase):
                 self.assertListEqual(case.tcs_out, sorted_timecodes, "sorted correctly")
 
     def test_multiply(self) -> None:
-        """test __mul__"""
+        """Test __mul__."""
 
         class TestCase(NamedTuple):
             tc_in: vtc.Timecode
@@ -896,7 +917,7 @@ class TestMagicMethods(unittest.TestCase):
                 self.assertEqual(case.expected, result, name)
 
     def test_divmod(self) -> None:
-        """test __divmod__, __floordiv__ and __mod__."""
+        """Test __divmod__, __floordiv__ and __mod__."""
 
         class TestCase(NamedTuple):
             source: vtc.Timecode
@@ -1008,7 +1029,7 @@ class TestMagicMethods(unittest.TestCase):
                 )
 
     def test_neg(self) -> None:
-        """Tests __neg__"""
+        """Tests __neg__."""
         tc = vtc.Timecode("01:00:04:14", rate=vtc.RATE.F24)
         neg = -tc
 
@@ -1016,7 +1037,7 @@ class TestMagicMethods(unittest.TestCase):
         self.assertEqual(-tc.rational, neg.rational, "fraction is negative")
 
     def test_abs(self) -> None:
-        """Tests __neg__"""
+        """Tests __abs__."""
 
         class TestCase(NamedTuple):
             tc_in: vtc.Timecode
@@ -1140,32 +1161,11 @@ class TestMagicMethods(unittest.TestCase):
         for source in ParseTCCase.Source:
             source_value: Any
 
-            if source is ParseTCCase.Source.TIMECODE:
-                source_value = event_in.timecode
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.FRAC:
-                source_value = event_in.rational
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.FRAMES:
-                source_value = event_in.frames
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.SECONDS:
-                source_value = event_in.seconds
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.FLOAT:
-                source_value = float(event_in.seconds)
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.RUNTIME:
-                source_value = event_in.runtime()
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.PPRO_TICKS:
-                source_value = event_in.premiere_ticks
-                event_len = event_out - source_value
-            elif source is ParseTCCase.Source.FEET_AND_FRAMES:
-                source_value = event_in.feet_and_frames
-                event_len = event_out - source_value
-            else:
-                raise RuntimeError("unknown source type:", source.name)
+            source_value, event_len = self._check_running_events_get_event_length(
+                source,
+                event_in,
+                event_out,
+            )
 
             self.assertEqual(
                 expected_duration,
@@ -1178,32 +1178,12 @@ class TestMagicMethods(unittest.TestCase):
         self.assertEqual(expected_tc_out, new_out.timecode, "new tc out expected")
 
         for source in ParseTCCase.Source:
-            if source is ParseTCCase.Source.TIMECODE:
-                this_total = current_total + event_len.timecode
-                new_out = current_tc_out + event_len.timecode
-            elif source is ParseTCCase.Source.FRAC:
-                this_total = current_total + event_len.rational
-                new_out = current_tc_out + event_len.rational
-            elif source is ParseTCCase.Source.FRAMES:
-                this_total = current_total + event_len.frames
-                new_out = current_tc_out + event_len.frames
-            elif source is ParseTCCase.Source.SECONDS:
-                this_total = current_total + event_len.seconds
-                new_out = current_tc_out + event_len.seconds
-            elif source is ParseTCCase.Source.FLOAT:
-                this_total = current_total + float(event_len.seconds)
-                new_out = current_tc_out + float(event_len.seconds)
-            elif source is ParseTCCase.Source.RUNTIME:
-                this_total = current_total + event_len.runtime()
-                new_out = current_tc_out + event_len.runtime()
-            elif source is ParseTCCase.Source.PPRO_TICKS:
-                this_total = current_total + event_len.premiere_ticks
-                new_out = current_tc_out + event_len.premiere_ticks
-            elif source is ParseTCCase.Source.FEET_AND_FRAMES:
-                this_total = current_total + event_len.feet_and_frames
-                new_out = current_tc_out + event_len.feet_and_frames
-            else:
-                raise RuntimeError(f"unexpected source: {source.name}")
+            this_total, new_out = self._check_running_events_get_length_total(
+                source,
+                current_total,
+                current_tc_out,
+                event_len,
+            )
 
             self.assertEqual(
                 new_total,
@@ -1218,8 +1198,90 @@ class TestMagicMethods(unittest.TestCase):
 
         return new_total, new_out
 
+    @staticmethod
+    def _check_running_events_get_event_length(
+        source: ParseTCCase.Source,
+        event_in: vtc.Timecode,
+        event_out: vtc.Timecode,
+    ) -> Tuple[vtc.TimecodeSource, vtc.Timecode]:
+        """
+        _check_running_events_get_length gets the event length by subtracting the source
+        type from event_in. It also returns the source value used for logging.
+        """
+        source_value: vtc.TimecodeSource
+
+        if source is ParseTCCase.Source.TIMECODE:
+            source_value = event_in.timecode
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.FRAC:
+            source_value = event_in.rational
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.FRAMES:
+            source_value = event_in.frames
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.SECONDS:
+            source_value = event_in.seconds
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.FLOAT:
+            source_value = float(event_in.seconds)
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.RUNTIME:
+            source_value = event_in.runtime()
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.PPRO_TICKS:
+            source_value = event_in.premiere_ticks
+            event_len = event_out - source_value
+        elif source is ParseTCCase.Source.FEET_AND_FRAMES:
+            source_value = event_in.feet_and_frames
+            event_len = event_out - source_value
+        else:
+            raise RuntimeError("unknown source type:", source.name)
+
+        return source_value, event_len
+
+    @staticmethod
+    def _check_running_events_get_length_total(
+        source: ParseTCCase.Source,
+        current_total: vtc.Timecode,
+        current_tc_out: vtc.Timecode,
+        event_len: vtc.Timecode,
+    ) -> Tuple[vtc.Timecode, vtc.Timecode]:
+        """
+        _check_running_events_get_length_total gets our new running totals by adding
+        the source type of event_len to current_total and current_tc_out.
+        """
+        if source is ParseTCCase.Source.TIMECODE:
+            this_total = current_total + event_len.timecode
+            new_out = current_tc_out + event_len.timecode
+        elif source is ParseTCCase.Source.FRAC:
+            this_total = current_total + event_len.rational
+            new_out = current_tc_out + event_len.rational
+        elif source is ParseTCCase.Source.FRAMES:
+            this_total = current_total + event_len.frames
+            new_out = current_tc_out + event_len.frames
+        elif source is ParseTCCase.Source.SECONDS:
+            this_total = current_total + event_len.seconds
+            new_out = current_tc_out + event_len.seconds
+        elif source is ParseTCCase.Source.FLOAT:
+            this_total = current_total + float(event_len.seconds)
+            new_out = current_tc_out + float(event_len.seconds)
+        elif source is ParseTCCase.Source.RUNTIME:
+            this_total = current_total + event_len.runtime()
+            new_out = current_tc_out + event_len.runtime()
+        elif source is ParseTCCase.Source.PPRO_TICKS:
+            this_total = current_total + event_len.premiere_ticks
+            new_out = current_tc_out + event_len.premiere_ticks
+        elif source is ParseTCCase.Source.FEET_AND_FRAMES:
+            this_total = current_total + event_len.feet_and_frames
+            new_out = current_tc_out + event_len.feet_and_frames
+        else:
+            raise RuntimeError(f"unexpected source: {source.name}")
+
+        return this_total, new_out
+
 
 class TestTimecodeMethods(unittest.TestCase):
+
     """TestTimecodeMethods tests non value representon or magic timecode methods."""
 
     def test_rebase(self) -> None:

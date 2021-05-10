@@ -30,28 +30,25 @@ users can spend more time on their workflow logc, and less time handling the
 corner-cases of parsing and calculating timecode.
 
 Features
-========
-&#8195;
+--------
 
-- SMPTE Conventions:
+  - SMPTE Conventions:
     - [X] NTSC
     - [X] Drop-Frame
     - [ ] Interlaced timecode (not implemented)
-- Timecode Representations:
+  - Timecode Representations:
     - Timecode    | '01:00:00:00'
     - Frames      | 86400
     - Seconds     | 3600.0
     - Runtime     | '01:00:00.0'
     - Rational    | 18018/5
     - Feet+Frames | '5400+00'
-
-        - [X] 35mm, 4-perf
-        - [ ] 35mm, 3-perf
-        - [ ] 35mm, 2-perf
-        - [ ] 16mm
-
+      - [X] 35mm, 4-perf
+      - [ ] 35mm, 3-perf
+      - [ ] 35mm, 2-perf
+      - [ ] 16mm
     - Premiere Ticks | 15240960000000
-- Operations:
+  - Operations:
     - Comparisons (==, <, <=, >, >=)
     - Add
     - Subtract
@@ -61,17 +58,17 @@ Features
     - Negative
     - Absolute
     - Rebase (recalculate frame count at new framerate)
-- Flexible Parsing:
+  - Flexible Parsing:
     - Partial timecodes      | '1:12'
     - Partial runtimes       | '1.5'
     - Negative string values | '-1:12', '-3+00'
     - Poorly formatted tc    | '1:13:4'
-- Type inference for fast scripting (add a tc string to a Timecode value).
-- Built-in consts for common framerates.
-- Modern Python Typehints for static analysis.
+  - Type inference for fast scripting (add a tc string to a Timecode value).
+  - Built-in consts for common framerates.
+  - Modern Python Typehints for static analysis.
 
 Demo
-====
+----
 
 Let's take a quick high-level look at what you can do with this library:
 
@@ -225,7 +222,7 @@ True
 
 
 Goals
-=====
+-----
 
 - Parse and fetch all Timecode representations.
 - A clean, Pythonic API.
@@ -233,19 +230,19 @@ Goals
 - Sane shortcuts for scripting.
 
 Non-Goals
-=========
+---------
 
 - Real-time timecode generators.
 
 Installation
-============
+------------
 
 ```shell
 pip install vtc
 ```
 
 Getting Started
-===============
+---------------
 
 For full documentation:
 [read the docs](https://opencinemac.github.io/vtc-py/).
@@ -254,11 +251,11 @@ For library development guide,
 [read the docs](https://opencinemac.github.io/occlib-py/).
 
 Authors
-=======
+-------
 
 * **Billy Peake** - *Initial work*
 
 Attributions
-============
-
+------------
+<div>Drop-frame calculations adapted from <a href="https://www.davidheidelberger.com/2010/06/10/drop-frame-timecode/">David Heidelberger's blog.</a></div>
 <div>Logo made by <a href="" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
