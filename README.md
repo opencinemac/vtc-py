@@ -1,6 +1,6 @@
 <h1 align="center">vtc-py</h1>
 <p align="center">
-    <img height=150 class="heightSet" align="center" src="https://raw.githubusercontent.com/peake100/rogerRabbit-go/master/zdocs/source/_static/logo1.svg"/>
+    <img height=150 class="heightSet" align="center" src="https://raw.githubusercontent.com/opencinemac/vtc-py/master/zdocs/source/_static/logo1.svg"/>
 </p>
 <p align="center">A SMPTE Timecode Library for Python</p>
 <p align="center">
