@@ -86,6 +86,9 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
     ]
     groups = [x for x in groups if x]
 
+    # If we got a hit on the negative group, this value is negative.
+    is_negative = matched.group("negative") is not None
+
     # Work backwards to fill in the sections that are present, otherwise the value is
     # '0'.
     seconds = 0
@@ -99,13 +102,14 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
         hours = int(groups[-3])
 
     if rate.ntsc:
-        calc_rate = Framerate(round(rate.frac), ntsc=False)
+        calc_rate = Framerate(round(rate.playback), ntsc=False)
     else:
         calc_rate = rate
 
-    if rate.drop_frame:
+    if rate.dropframe:
         frames_frac = _parse_drop_frame(
             sections=TimecodeSections(
+                negative=is_negative,
                 hours=hours,
                 minutes=minutes,
                 seconds=seconds,
@@ -118,9 +122,9 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
         seconds = seconds + minutes * _SECONDS_PER_MINUTE + hours * _SECONDS_PER_HOUR
 
         # Now get the frames as a fractional and then convert to an int.
-        frames_frac = frames + seconds * calc_rate.frac
+        frames_frac = frames + seconds * calc_rate.playback
 
-    if matched.group("negative"):
+    if is_negative:
         frames_frac = -frames_frac
 
     # Now parse the frame count.
@@ -185,7 +189,7 @@ def _parse_feet_and_frames_str(
 
 def _parse_int(frames: int, rate: Framerate) -> fractions.Fraction:
     """_parse_int converts the frame count into rational time."""
-    return frames / rate.frac
+    return frames / rate.playback
 
 
 def _parse_float(seconds: float, rate: Framerate) -> fractions.Fraction:
@@ -218,7 +222,7 @@ def _parse_premiere_ticks(ticks: PremiereTicks, rate: Framerate) -> fractions.Fr
 def _rational_to_frames(seconds: fractions.Fraction, rate: Framerate) -> int:
     """_rational_to_frames converts rational seconds to a frame count."""
     # multiply the fraction to frames.
-    frac_frames = seconds * rate.frac
+    frac_frames = seconds * rate.playback
 
     # If this value converted cleanly, we can just return the numerator.
     if frac_frames.denominator == 1:

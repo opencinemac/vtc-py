@@ -51,8 +51,6 @@ class Framerate:
             whole number before the :func:`~Timecode.timecode` representation is
             calculated.
 
-            Whin
-
         :param dropframe: Whether this is a drop-frame style timecode (only available
             for frame rates divisible by 30000/1001 like 29.97 and 59.94).
         """
@@ -65,7 +63,7 @@ class Framerate:
         # Parse tha value into a timebase.
         self._value = _parse(src, ntsc)
         if isinstance(src, Framerate):
-            self._dropframe = src.drop_frame
+            self._dropframe = src.dropframe
             ntsc = src.ntsc
 
         self._ntsc = _infer_ntsc(self._value, ntsc)
@@ -104,8 +102,38 @@ class Framerate:
         )
 
     @property
-    def frac(self) -> fractions.Fraction:
-        """The rational representation of the timebase (24/1) as a fraction"""
+    def playback(self) -> fractions.Fraction:
+        """
+        The rational representation of the real-world video playback speed in
+        frames-per-second as a fraction.
+
+        example: 24000/1001.
+
+        .. note::
+            :func:`~Framerate.playback` and :func:`~Framerate.timebase` only differ in
+            NTSC framerates. All non-NTSC framerates will have identical values for
+            both properties.
+        """
+        return self._value
+
+    @property
+    def timebase(self) -> fractions.Fraction:
+        """
+        The rational representation of the timecode display speed in frames-per-second
+        as a fraction.
+
+        example: 24/1
+
+        .. note::
+            :func:`~Framerate.playback` and :func:`~Framerate.timebase` only differ in
+            NTSC framerates. All non-NTSC framerates will have identical values for
+            both properties.
+        """
+        # If this is an NTSC timebase, convert to a rounded value over 1.
+        if self._ntsc:
+            return fractions.Fraction(round(self._value), 1)
+
+        # Otherwise return our internal value.
         return self._value
 
     @property
@@ -114,7 +142,7 @@ class Framerate:
         return self._ntsc
 
     @property
-    def drop_frame(self) -> bool:
+    def dropframe(self) -> bool:
         """Whether this Framerate is drop-frame."""
         return self._dropframe
 
@@ -190,7 +218,7 @@ def _parse(src: "FramerateSource", ntsc: Optional[bool]) -> fractions.Fraction:
             )
         frac = fractions.Fraction(numerator=src[0], denominator=src[1])
     elif isinstance(src, Framerate):
-        frac = src.frac
+        frac = src.playback
     elif isinstance(src, fractions.Fraction):
         frac = src
     else:

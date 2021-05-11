@@ -23,7 +23,7 @@ def _parse_drop_frame(
             "not divisible by 10",
         )
 
-    rate_whole = round(rate.frac)
+    rate_whole = round(rate.playback)
     drop_frames = round(rate_whole * 0.066666)
     frames_per_hour = _SECONDS_PER_HOUR * rate_whole
     frames_per_minute = _SECONDS_PER_MINUTE * rate_whole
@@ -41,25 +41,31 @@ def _parse_drop_frame(
     return fractions.Fraction(frame_number, 1)
 
 
-def _frame_num_to_drop_frame_num(frame_number: int, rate: Framerate) -> int:
+def _frame_num_to_drop_frame_num(
+    frame_number: int,
+    timebase: fractions.Fraction,
+) -> int:
     """
     _frame_num_to_drop_frame_num converts a frame-number to an adjusted frame number for
     creating drop-frame tc.
 
     Algorithm adapted from:
     https://www.davidheidelberger.com/2010/06/10/drop-frame-timecode/
-    """
-    # Get the whole-frame rate (ex: 29.97 -> 30)
-    rate_whole = round(rate.frac)
 
+    :param frame_number: the frame number to convert to a drop-frame number.
+    :param timebase: the timebase (not playback) to use for the conversion.
+
+    :returns: The frame number adjusted to produce the correct drop-frame timecode when
+    used in the normal timecode calculation.
+    """
     # Get the number frames-per-minute at the whole-frame rate
-    frames_per_minute_whole = rate_whole * 60
+    frames_per_minute_whole = timebase * 60
     # Get the number of frames we need to drop each time we drop frames (ex: 2 or 29.97)
-    drop_frames = round(rate_whole * 0.066666)
+    drop_frames = round(timebase * 0.066666)
 
     # Get the number of frames are in a minute where we have dropped frames at the
     # beginning
-    frames_per_minute_drop = (rate_whole * 60) - drop_frames
+    frames_per_minute_drop = (timebase * 60) - drop_frames
     # Get the number of actual frames in a 10-minute span for drop frame timecode. Since
     # we drop 9 times a minute, it will be 9 drop-minute frame counts + 1 whole-minute
     # frame count.
@@ -79,7 +85,7 @@ def _frame_num_to_drop_frame_num(frame_number: int, rate: Framerate) -> int:
 
     # Remove the first full minute (we don't drop until the next minute) and add the
     # drop-rate to the adjustment.
-    frames -= rate_whole
+    frames -= timebase
     adjustment += drop_frames
 
     # Get the number of remaining drop-minutes present, and add a drop adjustment for

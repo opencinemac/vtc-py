@@ -107,6 +107,19 @@ Let's take a quick high-level look at what you can do with this library:
     >>> tc.feet_and_frames
     '93889+10'
 
+    # We can inspect the framerate.
+    >>> tc.rate.playback
+    Fraction(24000, 1001)
+
+    >>> tc.rate.timebase
+    Fraction(24, 1)
+
+    >>> tc.rate.ntsc
+    True
+
+    >>> tc.rate.dropframe
+    False
+
     # Parsing is flexible
     # Partial timecode
     >>> vtc.Timecode("3:12", rate=23.98)
