@@ -13,7 +13,8 @@ class FramerateParseCase:
 
     ntsc_arg: Optional[bool] = None
 
-    expected_frac: Optional[fractions.Fraction] = None
+    expected_playback: Optional[fractions.Fraction] = None
+    expected_timebase: Optional[fractions.Fraction] = None
     expected_drop_frame: bool = False
     expected_ntsc: bool = False
 
@@ -21,7 +22,7 @@ class FramerateParseCase:
     expected_error_text: str = ""
 
     def __str__(self) -> str:
-        return f"{repr(self.source)} -> {self.expected_frac}"
+        return f"{repr(self.source)} -> {self.expected_playback}"
 
 
 class TestTimebaseBasics(unittest.TestCase):
@@ -31,457 +32,615 @@ class TestTimebaseBasics(unittest.TestCase):
             # ----------------
             FramerateParseCase(
                 source="23.976",
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=23.976,
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="23.98",
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=23.98,
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(24000, 1001),
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1001, 24000),
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(24000, 1001),
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(1001, 24000),
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="24000/1001",
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="1001/24000",
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=vtc.Framerate("24000/1001"),
-                expected_frac=fractions.Fraction(24000, 1001),
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24, 1),
                 expected_ntsc=True,
+            ),
+            # NTSC = False should explicitly set the timebase to the same value.
+            FramerateParseCase(
+                source=fractions.Fraction(24000, 1001),
+                ntsc_arg=False,
+                expected_playback=fractions.Fraction(24000, 1001),
+                expected_timebase=fractions.Fraction(24000, 1001),
+                expected_ntsc=False,
             ),
             # 24.0 -----------
             # ----------------
             FramerateParseCase(
                 source="24.0",
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=24.0,
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source="24",
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=24,
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(24, 1),
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1, 24),
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=(24, 1),
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=(1, 24),
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source="24/1",
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source="1/24",
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             FramerateParseCase(
                 source=vtc.Framerate("24/1"),
-                expected_frac=fractions.Fraction(24, 1),
+                expected_playback=fractions.Fraction(24, 1),
+                expected_timebase=fractions.Fraction(24, 1),
             ),
             # 29.97 ----------
             # ----------------
             FramerateParseCase(
                 source="29.97",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=29.97,
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="29.97",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="29.97",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="29.97",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_drop_frame=True,
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="29.97",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_drop_frame=True,
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(30000, 1001),
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1001, 30000),
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(30000, 1001),
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(1001, 30000),
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="30000/1001",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="1001/30000",
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=vtc.Framerate("30000/1001"),
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30, 1),
                 expected_ntsc=True,
             ),
             # Passing an explicit false to ntsc should lead to a false result.
             FramerateParseCase(
                 source="30000/1001",
                 ntsc_arg=False,
-                expected_frac=fractions.Fraction(30000, 1001),
+                expected_playback=fractions.Fraction(30000, 1001),
+                expected_timebase=fractions.Fraction(30000, 1001),
                 expected_ntsc=False,
             ),
             # 30.0 -----------
             # ----------------
             FramerateParseCase(
                 source="30",
-                expected_frac=fractions.Fraction(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
             FramerateParseCase(
                 source=30,
-                expected_frac=fractions.Fraction(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
             FramerateParseCase(
                 source="30.0",
-                expected_frac=fractions.Fraction(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
             FramerateParseCase(
                 source=30.0,
-                expected_frac=fractions.Fraction(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(30, 1),
-                expected_frac=fractions.Fraction(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1, 30),
-                expected_frac=fractions.Fraction(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
-            FramerateParseCase(source=(30, 1), expected_frac=fractions.Fraction(30, 1)),
-            FramerateParseCase(source=(1, 30), expected_frac=fractions.Fraction(30, 1)),
-            FramerateParseCase(source="30/1", expected_frac=fractions.Fraction(30, 1)),
-            FramerateParseCase(source="1/30", expected_frac=fractions.Fraction(30, 1)),
             FramerateParseCase(
-                source=vtc.Framerate("30/1"), expected_frac=fractions.Fraction(30, 1)
+                source=(30, 1),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
+            ),
+            FramerateParseCase(
+                source=(1, 30),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
+            ),
+            FramerateParseCase(
+                source="30/1",
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
+            ),
+            FramerateParseCase(
+                source="1/30",
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
+            ),
+            FramerateParseCase(
+                source=vtc.Framerate("30/1"),
+                expected_playback=fractions.Fraction(30, 1),
+                expected_timebase=fractions.Fraction(30, 1),
             ),
             # 47.95 ----------
             # ----------------
             FramerateParseCase(
                 source="47.95",
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=47.95,
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(48000, 1001),
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1001, 48000),
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(48000, 1001),
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(1001, 48000),
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="48000/1001",
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="1001/48000",
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=vtc.Framerate("48000/1001"),
-                expected_frac=fractions.Fraction(48000, 1001),
+                expected_playback=fractions.Fraction(48000, 1001),
+                expected_timebase=fractions.Fraction(48, 1),
                 expected_ntsc=True,
             ),
             # 48.0 -----------
             # ----------------
             FramerateParseCase(
                 source="48",
-                expected_frac=fractions.Fraction(48, 1),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
             ),
             FramerateParseCase(
                 source=48,
-                expected_frac=fractions.Fraction(48, 1),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
             ),
             FramerateParseCase(
                 source=48.0,
-                expected_frac=fractions.Fraction(48, 1),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(48, 1),
-                expected_frac=fractions.Fraction(48, 1),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1, 48),
-                expected_frac=fractions.Fraction(48, 1),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
             ),
-            FramerateParseCase(source=(48, 1), expected_frac=fractions.Fraction(48, 1)),
-            FramerateParseCase(source=(1, 48), expected_frac=fractions.Fraction(48, 1)),
-            FramerateParseCase(source="48/1", expected_frac=fractions.Fraction(48, 1)),
-            FramerateParseCase(source="1/48", expected_frac=fractions.Fraction(48, 1)),
             FramerateParseCase(
-                source=vtc.Framerate("48/1"), expected_frac=fractions.Fraction(48, 1)
+                source=(48, 1),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
+            ),
+            FramerateParseCase(
+                source=(1, 48),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
+            ),
+            FramerateParseCase(
+                source="48/1",
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
+            ),
+            FramerateParseCase(
+                source="1/48",
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
+            ),
+            FramerateParseCase(
+                source=vtc.Framerate("48/1"),
+                expected_playback=fractions.Fraction(48, 1),
+                expected_timebase=fractions.Fraction(48, 1),
             ),
             # 59.94 ----------
             # ----------------
             FramerateParseCase(
                 source="59.94",
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=59.94,
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(60000, 1001),
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1001, 60000),
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(60000, 1001),
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(1001, 60000),
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="60000/1001",
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="1001/60000",
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=vtc.Framerate("60000/1001"),
-                expected_frac=fractions.Fraction(60000, 1001),
+                expected_playback=fractions.Fraction(60000, 1001),
+                expected_timebase=fractions.Fraction(60, 1),
                 expected_ntsc=True,
             ),
             # 60.0 -----------
             # ----------------
             FramerateParseCase(
                 source="60",
-                expected_frac=fractions.Fraction(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
             FramerateParseCase(
                 source=60,
-                expected_frac=fractions.Fraction(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
             FramerateParseCase(
                 source="60.0",
-                expected_frac=fractions.Fraction(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
             FramerateParseCase(
                 source=60.0,
-                expected_frac=fractions.Fraction(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(60, 1),
-                expected_frac=fractions.Fraction(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1, 60),
-                expected_frac=fractions.Fraction(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
-            FramerateParseCase(source=(60, 1), expected_frac=fractions.Fraction(60, 1)),
-            FramerateParseCase(source=(1, 60), expected_frac=fractions.Fraction(60, 1)),
-            FramerateParseCase(source="60/1", expected_frac=fractions.Fraction(60, 1)),
-            FramerateParseCase(source="1/60", expected_frac=fractions.Fraction(60, 1)),
             FramerateParseCase(
-                source=vtc.Framerate("60/1"), expected_frac=fractions.Fraction(60, 1)
+                source=(60, 1),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
+            ),
+            FramerateParseCase(
+                source=(1, 60),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
+            ),
+            FramerateParseCase(
+                source="60/1",
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
+            ),
+            FramerateParseCase(
+                source="1/60",
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
+            ),
+            FramerateParseCase(
+                source=vtc.Framerate("60/1"),
+                expected_playback=fractions.Fraction(60, 1),
+                expected_timebase=fractions.Fraction(60, 1),
             ),
             # 199.88 ---------
             # ----------------
             FramerateParseCase(
                 source="119.88",
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=119.88,
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(120000, 1001),
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1001, 120000),
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(120000, 1001),
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=(1001, 120000),
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="120000/1001",
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source="1001/120000",
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             FramerateParseCase(
                 source=vtc.Framerate("120000/1001"),
-                expected_frac=fractions.Fraction(120000, 1001),
+                expected_playback=fractions.Fraction(120000, 1001),
+                expected_timebase=fractions.Fraction(120, 1),
                 expected_ntsc=True,
             ),
             # 120.0 -----------
             # ----------------
             FramerateParseCase(
                 source="120",
-                expected_frac=fractions.Fraction(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
                 source=120,
-                expected_frac=fractions.Fraction(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
                 source="120.0",
-                expected_frac=fractions.Fraction(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
                 source=120.0,
-                expected_frac=fractions.Fraction(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(120, 1),
-                expected_frac=fractions.Fraction(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
                 source=fractions.Fraction(1, 120),
-                expected_frac=fractions.Fraction(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
-                source=(120, 1), expected_frac=fractions.Fraction(120, 1)
+                source=(120, 1),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
-                source=(1, 120), expected_frac=fractions.Fraction(120, 1)
+                source=(1, 120),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
-                source="120/1", expected_frac=fractions.Fraction(120, 1)
+                source="120/1",
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
-                source="1/120", expected_frac=fractions.Fraction(120, 1)
+                source="1/120",
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             FramerateParseCase(
-                source=vtc.Framerate("120/1"), expected_frac=fractions.Fraction(120, 1)
+                source=vtc.Framerate("120/1"),
+                expected_playback=fractions.Fraction(120, 1),
+                expected_timebase=fractions.Fraction(120, 1),
             ),
             # ERRORS ----------
             # -----------------
@@ -555,9 +714,14 @@ class TestTimebaseBasics(unittest.TestCase):
                 )
 
                 print("\nPARSED:", tb)
-                self.assertEqual(tb.frac, case.expected_frac, "frac value is expected")
                 self.assertEqual(
-                    tb.drop_frame,
+                    tb.playback, case.expected_playback, "playback expected"
+                )
+                self.assertEqual(
+                    tb.timebase, case.expected_timebase, "timebase expected"
+                )
+                self.assertEqual(
+                    tb.dropframe,
                     case.expected_drop_frame,
                     "drop frame is expected",
                 )
@@ -565,8 +729,10 @@ class TestTimebaseBasics(unittest.TestCase):
 
     def test_parse_drop_frame(self) -> None:
         fr = vtc.Framerate(29.97, dropframe=True)
-        self.assertEqual(fr.frac, fractions.Fraction(30000, 1001), "tb frac expected")
-        self.assertTrue(fr.drop_frame, "tb is drop frame")
+        self.assertEqual(
+            fr.playback, fractions.Fraction(30000, 1001), "tb frac expected"
+        )
+        self.assertTrue(fr.dropframe, "tb is drop frame")
 
     def test_parse_error_drop_frame_bad_value(self) -> None:
         with self.assertRaises(ValueError) as error:

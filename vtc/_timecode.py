@@ -198,25 +198,30 @@ class Timecode:
         rate = self._rate
         frames_number = abs(self.frames)
 
-        if self._rate.drop_frame:
+        if self._rate.dropframe:
             # We need to do an adjustment for drop-frame timecode
-            frames_number = _frame_num_to_drop_frame_num(frames_number, self._rate)
+            frames_number = _frame_num_to_drop_frame_num(
+                frames_number,
+                self.rate.timebase,
+            )
 
+        rate_frac = self.rate.playback
         if rate.ntsc:
             # If this is an ntsc frame rate, we need to present the timecode as if it
             # were a whole-frame framerate (23.98 gets presented as if it were 24).
-            rate = Framerate(round(self._rate.frac))
+            rate_frac = self.rate.timebase
 
-        rate_int = int(rate.frac)
-        hours, frames = divmod(frames_number, rate_int * _SECONDS_PER_HOUR)
-        minutes, frames = divmod(frames, rate_int * _SECONDS_PER_MINUTE)
-        seconds, frames = divmod(frames, rate_int)
+        hours, frames = divmod(frames_number, rate_frac * _SECONDS_PER_HOUR)
+        minutes, frames = divmod(frames, rate_frac * _SECONDS_PER_MINUTE)
+        seconds, frames = divmod(frames, rate_frac)
 
         return TimecodeSections(
+            # If our value is less than 0, this is a negative value.
+            negative=self._value < 0,
             hours=hours,
             minutes=minutes,
             seconds=seconds,
-            frames=frames,
+            frames=round(frames),
         )
 
     @property
@@ -227,7 +232,7 @@ class Timecode:
         sections = self.sections
 
         frames_sep = ":"
-        if self._rate.drop_frame:
+        if self._rate.dropframe:
             frames_sep = ";"
 
         timecode = (

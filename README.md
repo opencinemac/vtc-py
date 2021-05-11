@@ -100,6 +100,19 @@ Fraction(751868117, 12000)
 >>> tc.feet_and_frames
 '93889+10'
 
+# We can inspect the framerate.
+>>> tc.rate.playback
+Fraction(24000, 1001)
+
+>>> tc.rate.timebase
+Fraction(24, 1)
+
+>>> tc.rate.ntsc
+True
+
+>>> tc.rate.dropframe
+False
+
 # Parsing is flexible
 # Partial timecode
 >>> vtc.Timecode("3:12", rate=23.98)
