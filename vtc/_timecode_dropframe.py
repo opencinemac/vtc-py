@@ -15,16 +15,19 @@ def _parse_drop_frame(
     Algorithm adapted from:
     https://www.davidheidelberger.com/2010/06/10/drop-frame-timecode/
     """
-    has_bad_frame = sections.frames == 0 or sections.frames == 1
+    rate_whole = round(rate.playback)
+    drop_frames = round(rate_whole * 0.066666)
+
+    # We have a bad frame value if our 'frames' place is less than the drop_frames we
+    # skip on minutes not divisible by 10.
+    has_bad_frame = sections.frames < drop_frames
     is_tenth_minute = sections.minutes % 10 == 0 or sections.minutes == 0
     if has_bad_frame and not is_tenth_minute:
         raise ValueError(
-            f"drop-frame tc cannot have a frames value of {sections.frames} on minutes "
-            "not divisible by 10",
+            f"drop-frame tc cannot have a frames value of less than {drop_frames} on "
+            f"minutes not divisible by 10, found '{sections.frames}'",
         )
 
-    rate_whole = round(rate.playback)
-    drop_frames = round(rate_whole * 0.066666)
     frames_per_hour = _SECONDS_PER_HOUR * rate_whole
     frames_per_minute = _SECONDS_PER_MINUTE * rate_whole
 
