@@ -170,6 +170,15 @@ class TestParse(unittest.TestCase):
             # ------------------------------------
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
+                frac=fractions.Fraction(0, 1),
+                frames=0,
+                timecode="00:00:00;00",
+                seconds=decimal.Decimal("0.0"),
+                runtime="00:00:00.0",
+                feet_and_frames="0+00",
+            ),
+            ParseTCCase(
+                rate=vtc.RATE.F29_97_DF,
                 frac=fractions.Fraction(31031, 15000),
                 frames=62,
                 timecode="00:00:02;02",
@@ -281,6 +290,46 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("3599.9964"),
                 runtime="-00:59:59.9964",
                 feet_and_frames="-6743+04",
+            ),
+            # 59.94 DF ---------------------------
+            # ------------------------------------
+            ParseTCCase(
+                rate=vtc.RATE.F59_94_DF,
+                frac=fractions.Fraction(0, 1),
+                frames=0,
+                timecode="00:00:00;00",
+                seconds=decimal.Decimal("0.0"),
+                runtime="00:00:00.0",
+                feet_and_frames="0+00",
+            ),
+            ParseTCCase(
+                rate=vtc.RATE.F59_94_DF,
+                frac=fractions.Fraction(61061, 60000),
+                frames=61,
+                timecode="00:00:01;01",
+                seconds=decimal.Decimal("1.017683333333333333333333333"),
+                runtime="00:00:01.017683333",
+                feet_and_frames="3+13",
+            ),
+            ParseTCCase(
+                rate=vtc.RATE.F59_94_DF,
+                frac=fractions.Fraction(21021, 20000),
+                frames=63,
+                timecode="00:00:01;03",
+                seconds=decimal.Decimal("1.05105"),
+                runtime="00:00:01.05105",
+                feet_and_frames="3+15",
+            ),
+            # This is the first minute we should be skipping frames on. For 59.94 we
+            # skip 4 frames.
+            ParseTCCase(
+                rate=vtc.RATE.F59_94_DF,
+                frac=fractions.Fraction(3003, 50),
+                frames=3600,
+                timecode="00:01:00;04",
+                seconds=decimal.Decimal("60.06"),
+                runtime="00:01:00.06",
+                feet_and_frames="225+00",
             ),
         ]
 
@@ -455,16 +504,36 @@ class TestParse(unittest.TestCase):
             str(caught.exception),
         )
 
-    def test_error_invalid_drop_frame_value(self) -> None:
+    def test_error_invalid_drop_frame_value_2997(self) -> None:
         """Tests error for trying to parse an invalid drop-frame value."""
-        with self.assertRaises(ValueError) as caught:
-            vtc.Timecode("00:01:00:00", rate=vtc.RATE.F29_97_DF)  # type: ignore
+        for i in range(0, 2):
+            with self.subTest(f"frames: {i}"):
+                with self.assertRaises(ValueError) as caught:
+                    vtc.Timecode(  # type: ignore
+                        f"00:01:00:0{i}",
+                        rate=vtc.RATE.F29_97_DF,
+                    )
 
-        self.assertEqual(
-            "drop-frame tc cannot have a frames value of 0 on minutes not divisible by "
-            "10",
-            str(caught.exception),
-        )
+                self.assertEqual(
+                    "drop-frame tc cannot have a frames value of less than 2 on minutes"
+                    f" not divisible by 10, found '{i}'",
+                    str(caught.exception),
+                )
+
+    def test_error_invalid_drop_frame_value_5994(self) -> None:
+        for i in range(0, 4):
+            with self.subTest(f"frames: {i}"):
+                with self.assertRaises(ValueError) as caught:
+                    vtc.Timecode(  # type: ignore
+                        f"00:01:00:0{i}",
+                        rate=vtc.RATE.F59_94_DF,
+                    )
+
+                self.assertEqual(
+                    "drop-frame tc cannot have a frames value of less than 4 on minutes"
+                    f" not divisible by 10, found '{i}'",
+                    str(caught.exception),
+                )
 
     def test_error_on_class_with_rate(self) -> None:
         """Tests that we get an error when supplying a vtc.Timecode and rate."""
