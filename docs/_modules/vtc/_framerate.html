@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>vtc._framerate &mdash; vtc 0.0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> vtc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-a-history">Timecode: A History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#supplied-framerates">Supplied Framerates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#manual-framerate-creation">Manual Framerate Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-representations">Timecode Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-value-inferences">Timecode Value Inferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-arithmetic">Timecode Arithmetic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-rounding">Timecode Rounding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-comparison">Timecode Comparison</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Timecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#framerate">Framerate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#rate">RATE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#premiereticks">PremiereTicks</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vtc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>vtc._framerate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for vtc._framerate</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">dataclasses</span>
+<span class="kn">import</span> <span class="nn">fractions</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="Framerate"><a class="viewcode-back" href="../../api.html#vtc.Framerate">[docs]</a><span class="k">class</span> <span class="nc">Framerate</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">src</span><span class="p">:</span> <span class="s2">&quot;FramerateSource&quot;</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">ntsc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dropframe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Framerate is the rate at which a video file frames are played back.</span>
+
+<span class="sd">        Framerate is measured in frames-per-second (24/1 = 24 frames-per-second).</span>
+
+<span class="sd">        :param src: the source value to parse to a Framerate. src must conform to</span>
+<span class="sd">            one of the following value types:</span>
+
+<span class="sd">            - :class:`Framerate`: Another timebase value.</span>
+
+<span class="sd">            - ``str``: Strings may be of a fractional value (&#39;24/1&#39;), whole numbers</span>
+<span class="sd">              representing the fps (&#39;24&#39;) OR decimal numbers like (&#39;23.9876&#39;) or 23.98.</span>
+<span class="sd">              Such values will be converted to their actual meaning (24000/1001).</span>
+
+<span class="sd">            - ``Tuple[int, int]``: Numerator and denominator of a fraction.</span>
+
+<span class="sd">            - ``fractions.Fraction`` value.</span>
+
+<span class="sd">            - ``float`` value -- only allowed if ntsc=true.</span>
+
+<span class="sd">            .. note ::</span>
+
+<span class="sd">                if a value like 1/24 is passed in (where the numerator is less than</span>
+<span class="sd">                the denominator), the value will be converted to 24/1 after being</span>
+<span class="sd">                parsed.</span>
+
+<span class="sd">        :param ntsc: Whether timecode should be calculated via NTSC convention.</span>
+
+<span class="sd">            For NTSC, playback speed is 23.976, the TIMECODE is still calculated as if</span>
+<span class="sd">            it were at 24fps, which affects how a :func:`~Timecode.timecode` value</span>
+<span class="sd">            will be rendered.</span>
+
+<span class="sd">            When ``None``, non-whole number floats like 23.98 and fractional values</span>
+<span class="sd">            with a denominator of 1001 will be assumed to be ntsc, but whole-numbers</span>
+<span class="sd">            will be left as-is.</span>
+
+<span class="sd">            When this option is ``True``, the framerate will be rounded to the nearest</span>
+<span class="sd">            whole number before the :func:`~Timecode.timecode` representation is</span>
+<span class="sd">            calculated.</span>
+
+<span class="sd">        :param dropframe: Whether this is a drop-frame style timecode (only available</span>
+<span class="sd">            for frame rates divisible by 30000/1001 like 29.97 and 59.94).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dropframe</span><span class="p">,</span> <span class="n">ntsc</span> <span class="o">=</span> <span class="n">_validate_dropframe_ntsc</span><span class="p">(</span><span class="n">ntsc</span><span class="p">,</span> <span class="n">dropframe</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dropframe</span> <span class="o">=</span> <span class="n">dropframe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ntsc</span><span class="p">:</span> <span class="nb">bool</span>
+
+        <span class="c1"># Parse tha value into a timebase.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">Framerate</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dropframe</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">dropframe</span>
+            <span class="n">ntsc</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">ntsc</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ntsc</span> <span class="o">=</span> <span class="n">_infer_ntsc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">)</span>
+        <span class="n">_validate_drop_frame_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropframe</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the framerate as a fractional string (ex: &#39;24/1&#39;).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns formatted framerate information: (ex: &#39;[24/1 fps NTSC]&#39;).&quot;&quot;&quot;</span>
+        <span class="n">rate_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">rate_value</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ntsc</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">+=</span> <span class="s2">&quot; NTSC&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropframe</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">+=</span> <span class="s2">&quot; DF&quot;</span>
+
+        <span class="n">value</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
+
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Two Framerate instances are equal if their fractional value, ntsc attribute and</span>
+<span class="sd">        drop frame attribute are equal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Framerate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_value</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ntsc</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_ntsc</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropframe</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_dropframe</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">playback</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The rational representation of the real-world video playback speed in</span>
+<span class="sd">        frames-per-second as a fraction.</span>
+
+<span class="sd">        example: 24000/1001.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            :func:`~Framerate.playback` and :func:`~Framerate.timebase` only differ in</span>
+<span class="sd">            NTSC framerates. All non-NTSC framerates will have identical values for</span>
+<span class="sd">            both properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">timebase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The rational representation of the timecode display speed in frames-per-second</span>
+<span class="sd">        as a fraction.</span>
+
+<span class="sd">        example: 24/1</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            :func:`~Framerate.playback` and :func:`~Framerate.timebase` only differ in</span>
+<span class="sd">            NTSC framerates. All non-NTSC framerates will have identical values for</span>
+<span class="sd">            both properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If this is an NTSC timebase, convert to a rounded value over 1.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ntsc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Otherwise return our internal value.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ntsc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Whether this is an NTSC-style time base (aka 23.98, 24000/1001, etc).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ntsc</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dropframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Whether this Framerate is drop-frame.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dropframe</span></div>
+
+
+<span class="k">def</span> <span class="nf">_validate_dropframe_ntsc</span><span class="p">(</span>
+    <span class="n">ntsc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+    <span class="n">dropframe</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    _validate_dropframe_ntsc validates that the drop frame and ntsc arguments are not</span>
+<span class="sd">    in conflict and returns adjusted ones.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dropframe</span><span class="p">:</span>
+        <span class="c1"># If NTSC was explicitly set to False and dropframe was explicitly set to true</span>
+        <span class="c1"># then there is a conflict.</span>
+        <span class="k">if</span> <span class="n">ntsc</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;ntsc must be [True] or [None] if drop_frame is [True]&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Otherwise if dropframe is true, NTSC must be set to true as well.</span>
+        <span class="n">ntsc</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">dropframe</span><span class="p">,</span> <span class="n">ntsc</span>
+
+
+<span class="k">def</span> <span class="nf">_infer_ntsc</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    _infer_ntsc looks at the parsed fraction value and infers if it should be considered</span>
+<span class="sd">    NTSC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If no explicit ntsc value was set, assume that values with a denominator of</span>
+    <span class="c1"># 1001 are ntsc.</span>
+    <span class="k">if</span> <span class="n">ntsc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">denominator</span> <span class="o">==</span> <span class="mi">1001</span><span class="p">:</span>
+            <span class="n">ntsc</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ntsc</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ntsc</span> <span class="o">=</span> <span class="n">ntsc</span>
+
+    <span class="k">return</span> <span class="n">ntsc</span>
+
+
+<span class="k">def</span> <span class="nf">_validate_drop_frame_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">dropframe</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    _validate_drop_frame_value validates that a framerate value with dropframe enabled</span>
+<span class="sd">    is a multiple of 30000/1001.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Validate that drop-frame TC is cleanly divisible by 30000/1001. Drop-frame is</span>
+    <span class="c1"># not defined for any other timebases. Generally it is only allowed for 29.97</span>
+    <span class="c1"># and 59.94</span>
+    <span class="k">if</span> <span class="n">dropframe</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">%</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">30000</span><span class="p">,</span> <span class="mi">1001</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;drop_frame may only be true if framerate is divisible by &quot;</span>
+            <span class="s2">&quot;30000/1001 (29.97)&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="s2">&quot;FramerateSource&quot;</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;_parse does the heavy lifting of parsing a value into a TimeBase.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">_parse_string</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">_parse_float</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Framerate tuple value must contain exactly 2 values, got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="n">numerator</span><span class="o">=</span><span class="n">src</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">denominator</span><span class="o">=</span><span class="n">src</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">Framerate</span><span class="p">):</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">playback</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">):</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">src</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unsupported type for Framerate conversion: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># If the numerator is less than the denominator, swap the values.</span>
+    <span class="k">if</span> <span class="n">frac</span><span class="o">.</span><span class="n">numerator</span> <span class="o">&lt;</span> <span class="n">frac</span><span class="o">.</span><span class="n">denominator</span><span class="p">:</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span>
+            <span class="n">numerator</span><span class="o">=</span><span class="n">frac</span><span class="o">.</span><span class="n">denominator</span><span class="p">,</span>
+            <span class="n">denominator</span><span class="o">=</span><span class="n">frac</span><span class="o">.</span><span class="n">numerator</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ntsc</span><span class="p">:</span>
+        <span class="c1"># If this is an ntsc timebase, we need to round up what we were given to the</span>
+        <span class="c1"># nearest whole number and divide by 1001.</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1001</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">frac</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_string</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    _parse_string parses a string value to a fraction.Fraction and drop frame</span>
+<span class="sd">    boolean.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If this looks like a fraction (has a &#39;/&#39;), try to parse it as such.</span>
+    <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="c1"># If this is a whole number like &quot;24.0&quot;, we want to just strip it.</span>
+    <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">src_float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_parse_float</span><span class="p">(</span><span class="n">src_float</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">)</span>
+
+    <span class="c1"># Try to parse as an int next.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">frac_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;could not parse Framerate value of </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># If this int passed, return 1/[value] as the TimeBase</span>
+    <span class="k">return</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="n">numerator</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">denominator</span><span class="o">=</span><span class="n">frac_int</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_float</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ntsc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">src</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span> <span class="ow">and</span> <span class="n">ntsc</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;non-whole-number floats values cannot be parsed when ntsc=False. &quot;</span>
+            <span class="s2">&quot;use precise fraction.Fraction value instead&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># If this is an integer, returns [src]/1</span>
+    <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
+
+    <span class="c1"># Otherwise we are going to assume this in an NTSC-style rate (like 29.97), and</span>
+    <span class="c1"># round up to the nearest whole number and use a denominator of 1001.</span>
+    <span class="k">return</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1001</span><span class="p">)</span>
+
+
+<span class="n">FramerateSource</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Framerate</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;FramerateSource is the set of types a Framerate can be created from&quot;&quot;&quot;</span>
+
+
+<span class="c1"># We&#39;ll use a frozen dataclass for this so the values cannot be changed.</span>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">_Rates</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    _Rates is used as a one-off na to hold a number of common pre-defined framerates for</span>
+<span class="sd">    callers to use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># 23.98 fps NTSC.</span>
+    <span class="n">F23_98</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mf">23.98</span><span class="p">,</span> <span class="n">ntsc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 24 fps.</span>
+    <span class="n">F24</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+
+    <span class="c1"># 29.97 fps NTSC.</span>
+    <span class="n">F29_97_NDF</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mf">29.97</span><span class="p">,</span> <span class="n">ntsc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 29.97 fps DROP FRAME.</span>
+    <span class="n">F29_97_DF</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mf">29.97</span><span class="p">,</span> <span class="n">dropframe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 30 fps NTSC.</span>
+    <span class="n">F30</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+    <span class="c1"># 47.95 fps NTSC.</span>
+    <span class="n">F47_95</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mf">47.95</span><span class="p">,</span> <span class="n">ntsc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 48 fps NTSC.</span>
+    <span class="n">F48</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
+
+    <span class="c1"># 59.94 fps NTSC.</span>
+    <span class="n">F59_94_NDF</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mf">59.94</span><span class="p">,</span> <span class="n">ntsc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 59.94 fps NTSC DROP FRAME.</span>
+    <span class="n">F59_94_DF</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mf">59.94</span><span class="p">,</span> <span class="n">dropframe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 60 fps NTSC.</span>
+    <span class="n">F60</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+
+
+<span class="n">RATE</span><span class="p">:</span> <span class="n">_Rates</span> <span class="o">=</span> <span class="n">_Rates</span><span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;RATE holds a number of pre-defined frame rates for convenience&quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright &#39;2021, Open Cinema Collective&#39;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
