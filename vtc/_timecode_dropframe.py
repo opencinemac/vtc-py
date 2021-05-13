@@ -15,8 +15,8 @@ def _parse_drop_frame(
     Algorithm adapted from:
     https://www.davidheidelberger.com/2010/06/10/drop-frame-timecode/
     """
-    rate_whole = round(rate.playback)
-    drop_frames = round(rate_whole * 0.066666)
+    timebase = rate.timebase
+    drop_frames = round(timebase * 0.066666)
 
     # We have a bad frame value if our 'frames' place is less than the drop_frames we
     # skip on minutes not divisible by 10.
@@ -28,8 +28,8 @@ def _parse_drop_frame(
             f"minutes not divisible by 10, found '{sections.frames}'",
         )
 
-    frames_per_hour = _SECONDS_PER_HOUR * rate_whole
-    frames_per_minute = _SECONDS_PER_MINUTE * rate_whole
+    frames_per_hour = _SECONDS_PER_HOUR * timebase
+    frames_per_minute = _SECONDS_PER_MINUTE * timebase
 
     total_minutes = 60 * sections.hours + sections.minutes
     adjustment = drop_frames * (total_minutes - total_minutes // 10)
@@ -37,7 +37,7 @@ def _parse_drop_frame(
     frame_number = (
         sections.hours * frames_per_hour
         + sections.minutes * frames_per_minute
-        + sections.seconds * rate_whole
+        + sections.seconds * timebase
         + sections.frames
         - adjustment
     )
