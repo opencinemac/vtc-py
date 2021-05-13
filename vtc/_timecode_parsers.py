@@ -6,7 +6,7 @@ from typing import Union, List
 from ._framerate import Framerate
 from ._premiere_ticks import PremiereTicks
 from ._timecode_sections import TimecodeSections
-from ._timecode_dropframe import _parse_drop_frame
+from ._timecode_dropframe import _parse_drop_frame_adjustment
 from ._consts import (
     _tc_regex,
     _runtime_regex,
@@ -106,8 +106,9 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
     else:
         calc_rate = rate
 
+    drop_adjustment = fractions.Fraction(0, 1)
     if rate.dropframe:
-        frames_frac = _parse_drop_frame(
+        drop_adjustment = _parse_drop_frame_adjustment(
             sections=TimecodeSections(
                 negative=is_negative,
                 hours=hours,
@@ -117,12 +118,15 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
             ),
             rate=calc_rate,
         )
-    else:
-        # Divide the frames by the rate then add to the seconds value.
-        seconds = seconds + minutes * _SECONDS_PER_MINUTE + hours * _SECONDS_PER_HOUR
 
-        # Now get the frames as a fractional and then convert to an int.
-        frames_frac = frames + seconds * calc_rate.playback
+    # Divide the frames by the rate then add to the seconds value.
+    seconds = seconds + minutes * _SECONDS_PER_MINUTE + hours * _SECONDS_PER_HOUR
+
+    # Now get the frames as a fractional and then convert to an int.
+    frames_frac = frames + seconds * calc_rate.playback
+
+    # Add the drop-frame drop_adjustment
+    frames_frac -= drop_adjustment
 
     if is_negative:
         frames_frac = -frames_frac

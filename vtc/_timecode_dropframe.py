@@ -2,10 +2,9 @@ import fractions
 
 from ._framerate import Framerate
 from ._timecode_sections import TimecodeSections
-from ._consts import _SECONDS_PER_HOUR, _SECONDS_PER_MINUTE
 
 
-def _parse_drop_frame(
+def _parse_drop_frame_adjustment(
     sections: TimecodeSections,
     rate: Framerate,
 ) -> fractions.Fraction:
@@ -28,20 +27,10 @@ def _parse_drop_frame(
             f"minutes not divisible by 10, found '{sections.frames}'",
         )
 
-    frames_per_hour = _SECONDS_PER_HOUR * timebase
-    frames_per_minute = _SECONDS_PER_MINUTE * timebase
-
     total_minutes = 60 * sections.hours + sections.minutes
     adjustment = drop_frames * (total_minutes - total_minutes // 10)
 
-    frame_number = (
-        sections.hours * frames_per_hour
-        + sections.minutes * frames_per_minute
-        + sections.seconds * timebase
-        + sections.frames
-        - adjustment
-    )
-    return fractions.Fraction(frame_number, 1)
+    return fractions.Fraction(adjustment, 1)
 
 
 def _frame_num_to_drop_frame_num(
