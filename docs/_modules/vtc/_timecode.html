@@ -1,0 +1,582 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>vtc._timecode &mdash; vtc 0.0.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> vtc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-a-history">Timecode: A History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#supplied-framerates">Supplied Framerates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#manual-framerate-creation">Manual Framerate Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-representations">Timecode Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-value-inferences">Timecode Value Inferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-arithmetic">Timecode Arithmetic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-rounding">Timecode Rounding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-comparison">Timecode Comparison</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Timecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#framerate">Framerate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#rate">RATE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#premiereticks">PremiereTicks</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vtc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>vtc._timecode</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for vtc._timecode</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">decimal</span>
+<span class="kn">import</span> <span class="nn">fractions</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">._framerate</span> <span class="kn">import</span> <span class="n">Framerate</span><span class="p">,</span> <span class="n">FramerateSource</span>
+<span class="kn">from</span> <span class="nn">._premiere_ticks</span> <span class="kn">import</span> <span class="n">PremiereTicks</span>
+<span class="kn">from</span> <span class="nn">._consts</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_PPRO_TICKS_PER_SECOND</span><span class="p">,</span>
+    <span class="n">_FRAMES_PER_FOOT</span><span class="p">,</span>
+    <span class="n">_SECONDS_PER_MINUTE</span><span class="p">,</span>
+    <span class="n">_SECONDS_PER_HOUR</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">._timecode_sections</span> <span class="kn">import</span> <span class="n">TimecodeSections</span>
+<span class="kn">from</span> <span class="nn">._timecode_parsers</span> <span class="kn">import</span> <span class="n">_TimecodeParseSource</span><span class="p">,</span> <span class="n">_parse</span><span class="p">,</span> <span class="n">_rational_to_frames</span>
+<span class="kn">from</span> <span class="nn">._timecode_dropframe</span> <span class="kn">import</span> <span class="n">_frame_num_to_drop_frame_num</span>
+
+
+<span class="n">TimecodeSource</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">_TimecodeParseSource</span><span class="p">,</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">TimecodeSource is the types of source values a timecode can be created from. See</span>
+<span class="sd">documentation for details on how different value types as converted.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Timecode"><a class="viewcode-back" href="../../api.html#vtc.Timecode">[docs]</a><span class="k">class</span> <span class="nc">Timecode</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">src</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FramerateSource</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Timecode represents the frame at a particular time in a video.</span>
+
+<span class="sd">        :param src: The source value to parse. The values type determines how it is</span>
+<span class="sd">            interpreted:</span>
+
+<span class="sd">            - ``vtc.Timecode``: used the ``vtc.Timecode.rational`` seconds value to</span>
+<span class="sd">              construct a new timecode.</span>
+
+<span class="sd">            - ``string``: etiher a timecode, runtime, or feet+frames string. Runtime</span>
+<span class="sd">              strings must have a fractal seconds place, i.e. &#39;01:00:00.0&#39;.</span>
+
+<span class="sd">            - ``int``: frame count.</span>
+
+<span class="sd">            - ``decimal.Decimal``: seconds.</span>
+
+<span class="sd">            - ``float``: seconds.</span>
+
+<span class="sd">            - ``fractions.Fraction``: seconds.</span>
+
+<span class="sd">            - ``vtc.PremiereTicks``: Adobe Premiere Pro ticks value.</span>
+
+<span class="sd">        :param rate: The framerate to use for this timecode. May be any value which</span>
+<span class="sd">            can be passed to the constructor of :class:`Framerate` or a</span>
+<span class="sd">            :class:`Framerate`. May only be ``None`` if ``src`` is  a :class:`Framerate`</span>
+<span class="sd">            instance.</span>
+
+<span class="sd">        :returns: A newly constructed :class:`Timecode` value.</span>
+
+<span class="sd">        :raises ValueError: If a string value passed to the constructor is not a valid</span>
+<span class="sd">            timecode, runtime, or feet+frames, or no rate value can be found.</span>
+
+<span class="sd">        :raises TypeError: If passed an unsupported type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">Timecode</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;rate must be None if src is vtc.Timecode. To rebase Timecode, use&quot;</span>
+                    <span class="s2">&quot;vtc.Timecode.rebase&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">rate</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">rational</span>
+
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;rate must be set for all Timecode src types except vtc.Timecode&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">:</span> <span class="n">Framerate</span> <span class="o">=</span> <span class="n">Framerate</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;__repr__ prints a timecode as [01:00:00:00 @ [23.98 NTSC]]&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timecode</span><span class="si">}</span><span class="s2"> @ </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;stringing a Timecode returns the timecode value (ex: 01:00:00:00)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecode</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Two timecodes are equal if their rational times are equal. This means that</span>
+<span class="sd">        even if their framerates are different, two timecodes that represent</span>
+<span class="sd">        1 hour of time exactly will be equal.</span>
+
+<span class="sd">        Note that this is NOT related to actual timecode presentation. An 23.98 NTSC</span>
+<span class="sd">        timecode of 01:00:00 will NOT be equal to a non-NTSC 23.98 timecode of</span>
+<span class="sd">        01:00:00 because the NTSC timecode represents a rational time of slightly</span>
+<span class="sd">        less than 1 hour.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="n">Timecode</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">==</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">&lt;</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">&lt;=</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">&gt;</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">&gt;=</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="n">frac_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">+</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="n">frac_value</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="n">other_tc</span> <span class="o">=</span> <span class="n">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+        <span class="n">frac_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">-</span> <span class="n">other_tc</span><span class="o">.</span><span class="n">_value</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="n">frac_value</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="c1"># Return a new timecode with the multiplication applied.</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">*</span> <span class="n">other</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="c1"># Return a new timecode with the multiplication applied.</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">/</span> <span class="n">other</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__floordiv__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="c1"># Return a new timecode with the multiplication applied.</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">//</span> <span class="n">other</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__mod__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">%</span> <span class="n">other</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__divmod__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;Timecode&quot;</span><span class="p">,</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">]:</span>
+        <span class="n">dividend</span><span class="p">,</span> <span class="n">modulo</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">Timecode</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">dividend</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">),</span>
+            <span class="n">Timecode</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">modulo</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__abs__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Framerate</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;rate is the framerate at which this timecode is being interpreted&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rational</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        frac is a rational (fraction) representation of number of seconds this timecode</span>
+<span class="sd">        represents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimecodeSections</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        sections returns the sections of a timecode as ints for callers to</span>
+<span class="sd">        format/work on as desired.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span>
+        <span class="n">frames_number</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="o">.</span><span class="n">dropframe</span><span class="p">:</span>
+            <span class="c1"># We need to do an adjustment for drop-frame timecode</span>
+            <span class="n">frames_number</span> <span class="o">=</span> <span class="n">_frame_num_to_drop_frame_num</span><span class="p">(</span>
+                <span class="n">frames_number</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">timebase</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">timebase</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">timebase</span>
+
+        <span class="n">hours</span><span class="p">,</span> <span class="n">frames</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">frames_number</span><span class="p">,</span> <span class="n">timebase</span> <span class="o">*</span> <span class="n">_SECONDS_PER_HOUR</span><span class="p">)</span>
+        <span class="n">minutes</span><span class="p">,</span> <span class="n">frames</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">timebase</span> <span class="o">*</span> <span class="n">_SECONDS_PER_MINUTE</span><span class="p">)</span>
+        <span class="n">seconds</span><span class="p">,</span> <span class="n">frames</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">timebase</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">TimecodeSections</span><span class="p">(</span>
+            <span class="c1"># If our value is less than 0, this is a negative value.</span>
+            <span class="n">negative</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">hours</span><span class="o">=</span><span class="n">hours</span><span class="p">,</span>
+            <span class="n">minutes</span><span class="o">=</span><span class="n">minutes</span><span class="p">,</span>
+            <span class="n">seconds</span><span class="o">=</span><span class="n">seconds</span><span class="p">,</span>
+            <span class="n">frames</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">timecode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        timecode returns the formatted SMPTE timecode: (ex: 01:00:00:00).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sections</span>
+
+        <span class="n">frames_sep</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="o">.</span><span class="n">dropframe</span><span class="p">:</span>
+            <span class="n">frames_sep</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
+
+        <span class="n">timecode</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">hours</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;:</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">minutes</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;:</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">seconds</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">frames_sep</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_add_neg_to_rep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="n">timecode</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        frames returns the frame number of this timecode (how many frames would have</span>
+<span class="sd">        played starting at 0 between 00:00:00:00 and the tc this value represents.).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_rational_to_frames</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">feet_and_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns the number of feet and frames this timecode represents if it were</span>
+<span class="sd">        shot on 35mm 4-perf film (16 frames per foot). ex: &#39;5400+13&#39;.</span>
+
+<span class="sd">        feet and frames is most commonly used as a reference in the sound mixing world.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feet</span><span class="p">,</span> <span class="n">frames</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">),</span> <span class="n">_FRAMES_PER_FOOT</span><span class="p">)</span>
+        <span class="n">feet_and_frames</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feet</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">_add_neg_to_rep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="n">feet_and_frames</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        seconds returns the number of seconds that would have elapsed between</span>
+<span class="sd">        00:00:00:00 and the timecode this value represents.</span>
+
+<span class="sd">        This value is a decimal.Decimal value to avoid floating-point shenanigans.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">numerator</span><span class="p">)</span> <span class="o">/</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">denominator</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">premiere_ticks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PremiereTicks</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        premiere_ticks returns the number of elapsed ticks this timecode represents in</span>
+<span class="sd">        Adobe Premiere Pro.</span>
+
+<span class="sd">        Premiere uses ticks internally to track elapsed time. A second contains</span>
+<span class="sd">        254016000000 ticks, regardless of framerate.</span>
+
+<span class="sd">        These ticks are present in Premiere FCP7XML cutlists, and can sometimes be used</span>
+<span class="sd">        for more precise calculations during respeeds.</span>
+
+<span class="sd">        Ticks are also used for scripting in Premiere Panels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PremiereTicks</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">*</span> <span class="n">_PPRO_TICKS_PER_SECOND</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Timecode.runtime"><a class="viewcode-back" href="../../api.html#vtc.Timecode.runtime">[docs]</a>    <span class="k">def</span> <span class="nf">runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runtime returns the true runtime of the timecode in HH:MM:SS.FFFFFFFFF format.</span>
+
+<span class="sd">        :param precision: how many places to print for fractional seconds.</span>
+<span class="sd">            None=no rounding.</span>
+
+<span class="sd">        Runtime will always be returned with at least one decimal place in order to</span>
+<span class="sd">        distinguish it from timecode without an hours value. A runtime of exactly one</span>
+<span class="sd">        hour will be returned as &#39;01:00:00.0&#39;</span>
+
+<span class="sd">        Note: The true runtime will often diverge from the hours, minutes, and seconds</span>
+<span class="sd">            value of the timecode representation when dealing with non-whole-frame</span>
+<span class="sd">            framerates. Even drop-frame timecode does not continuously adhere 1:1 to the</span>
+<span class="sd">            actual runtime. For instance, [01:00:00;00 @ 29.97 DF] has a true runtime of</span>
+<span class="sd">            &#39;00:59:59.9964&#39;, and [01:00:00:00 @ 23.98 NTSC] has a true runtime of</span>
+<span class="sd">            &#39;01:00:03.6&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">seconds</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seconds</span><span class="p">),</span> <span class="n">ndigits</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span>
+
+        <span class="n">hours</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="n">_SECONDS_PER_HOUR</span><span class="p">)</span>
+        <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="n">_SECONDS_PER_MINUTE</span><span class="p">)</span>
+        <span class="n">seconds</span><span class="p">,</span> <span class="n">fractal</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fractal</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fractal_str</span> <span class="o">=</span> <span class="s2">&quot;.0&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fractal_str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fractal</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+        <span class="n">runtime</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">hours</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">:&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}{</span><span class="n">fractal_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_add_neg_to_rep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="n">runtime</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Timecode.rebase"><a class="viewcode-back" href="../../api.html#vtc.Timecode.rebase">[docs]</a>    <span class="k">def</span> <span class="nf">rebase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_rate</span><span class="p">:</span> <span class="n">FramerateSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Timecode&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        rebase re-calculates the timecode at a new frame rate based on the frame-count</span>
+<span class="sd">        value of the current timecode.</span>
+
+<span class="sd">        :param new_rate: the new rate to rebase at.</span>
+
+<span class="sd">        :returns: The new, rebased timecode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">new_rate</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_add_neg_to_rep</span><span class="p">(</span><span class="n">frac_val</span><span class="p">:</span> <span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">,</span> <span class="n">rep</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    _add_neg_to_rep adds a negative sign to a string tc representation if the value is</span>
+<span class="sd">    less than 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">frac_val</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rep</span>
+
+    <span class="k">return</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">rep</span>
+
+
+<span class="k">def</span> <span class="nf">_coerce_other</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">TimecodeSource</span><span class="p">,</span> <span class="n">this_rate</span><span class="p">:</span> <span class="n">Framerate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timecode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    coerce other coerces a value to a timecode that an existing timecode needs to do</span>
+<span class="sd">    an operation with. If the other value is not a timecode, the rate of the ecisting</span>
+<span class="sd">    timecode will be used in parsing the other value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Timecode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">other</span>
+
+    <span class="k">return</span> <span class="n">Timecode</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">this_rate</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright &#39;2021, Open Cinema Collective&#39;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

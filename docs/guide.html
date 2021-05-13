@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Intro &mdash; vtc 0.0.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Timecode" href="api.html" />
+    <link rel="prev" title="Overview" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> vtc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#timecode-a-history">Timecode: A History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#supplied-framerates">Supplied Framerates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#manual-framerate-creation">Manual Framerate Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#timecode-representations">Timecode Representations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#timecode">Timecode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#frame-number">Frame Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#seconds">Seconds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#runtime">Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rational-time">Rational Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adobe-premiere-pro-ticks">Adobe Premiere Pro Ticks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feet-and-frames">Feet And Frames</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#timecode-value-inferences">Timecode Value Inferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#timecode-arithmetic">Timecode Arithmetic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#timecode-rounding">Timecode Rounding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#timecode-comparison">Timecode Comparison</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Timecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#framerate">Framerate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#rate">RATE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#premiereticks">PremiereTicks</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">vtc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Intro</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/guide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="intro">
+<h1>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h1>
+<p>vtc is built to have a simple, scriptable interface without sacrificing features or
+correctness.</p>
+<p>Let’s walk through the assumptions vtc makes to offer a fast scripting API, and how
+to override them.</p>
+</div>
+<div class="section" id="timecode-a-history">
+<h1>Timecode: A History<a class="headerlink" href="#timecode-a-history" title="Permalink to this headline">¶</a></h1>
+<p>But first: what is timecode?</p>
+<p>If you’re already familiar with timecode, it’s history, and it’s flavors, feel free to
+skip this section.</p>
+<p>Back in the days of film, a running strip of numbers ran along the edge of the film
+stock to uniquely identify each frame, called
+<a class="reference external" href="https://en.wikipedia.org/wiki/Keykode">keycode</a>.</p>
+<p>Keycode was essential to the film editing process. The raw negative of a film is
+irreplaceable: you loose quality each time you make a copy. Editing film is necessarily
+a <a class="reference external" href="https://nofilmschool.com/2017/06/editing-on-a-flatbed">destructive process</a>, and
+often required multiple iterations. It would be just a tad nerve-wracking to take a pair
+of scissors and some glue to the one-of-a-kind film reels straight out of the camera
+on set, then running it over and over through a flatbed.</p>
+<p>To avoid potential disaster, editors made their cut of the film using copies of the
+raw negative, called a <a class="reference external" href="https://en.wikipedia.org/wiki/Workprint">work print</a>, allowing
+the editor to work without fear of sinking a project from slicing, dicing, and wearing
+at the film.</p>
+<p>When the edit was complete, it was necessary to know <em>exactly</em> where the edits had been
+made, so it could be recreated with the raw negative for finishing. A <em>cut list</em> would
+be written out, with the exact reels and keycodes for every cut, and would be used to
+make an exact duplicate of the editor’s work print with the mint condition raw negative.</p>
+<p>In video and digital filmmaking, the same approach is used. Massive RAW files from a
+RED, ARRI, Sony, or other cinema camera are rendered down to more manageable files an
+Editor’s machine won’t choke on. Once the edit is complete, the raw files are
+re-assembled using a digital cutlist on a powerful machine for finishing out the film.</p>
+<p>In film, we referenced <em>keycode</em> to know exactly what frame was being displayed on
+screen at any given time. In digital video, we reference the <em>timecode</em> of a given
+frame.</p>
+<p>For a technical deep-dive into the many flavors of timecode, check out
+<a class="reference external" href="frame.io">Frame.io’s</a>
+<a class="reference external" href="https://blog.frame.io/2017/07/17/timecode-and-frame-rates/">excellent blogpost</a> on
+the subject.</p>
+</div>
+<div class="section" id="supplied-framerates">
+<h1>Supplied Framerates<a class="headerlink" href="#supplied-framerates" title="Permalink to this headline">¶</a></h1>
+<p>vtc contains a number of pre-supplied framerates though the <code class="xref py py-data docutils literal notranslate"><span class="pre">RATE</span></code> namespace:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">vtc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F23_98</span>
+<span class="go">[23.98 NTSC]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="manual-framerate-creation">
+<h1>Manual Framerate Creation<a class="headerlink" href="#manual-framerate-creation" title="Permalink to this headline">¶</a></h1>
+<p>In order to make scripting more ergonomic, vtc has sane defaults for parsing Framerate
+values.</p>
+<p>By default, a whole-frame framerate is left as-is</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">vtc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Framerate</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+<span class="go">[24]</span>
+</pre></div>
+</div>
+<p>For floats too:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Framerate</span><span class="p">(</span><span class="mf">24.0</span><span class="p">)</span>
+<span class="go">[24]</span>
+</pre></div>
+</div>
+<p>It can be forced to an NTSC timebase by explicitly setting <code class="docutils literal notranslate"><span class="pre">ntsc=True</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Framerate</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="n">ntsc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[23.98 NTSC]</span>
+</pre></div>
+</div>
+<p>Non-whole-frame rates are interpreted as being NTSC by default:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Framerate</span><span class="p">(</span><span class="mf">23.98</span><span class="p">)</span>
+<span class="go">[23.98 NTSC]</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>NTSC Auto-detection</strong></p>
+<p>By default, non-whole framerates are rounded, multiplied by 1000, then put over a
+denominator of 1001 to make them proper NTSC framerates, regardless of their value.</p>
+<p>23.98 will be converted to 24000/1001, but so will 23.5.</p>
+</div>
+<p>We can disable interpretation of non-whole framerates as NTSC by setting <code class="docutils literal notranslate"><span class="pre">ntsc=False</span></code>
+in order to define custom rates.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fractions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Framerate</span><span class="p">(</span><span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">ntsc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">[1.5]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Non-NTSC Restrictions</strong></p>
+<p>Using a float with <code class="docutils literal notranslate"><span class="pre">ntsc=False</span></code> will result in a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Floats are not
+precise, and without the ntsc flag, vtc cannot know exactly what framerate you want.
+A <code class="docutils literal notranslate"><span class="pre">decimal.Decimal</span></code> or <code class="docutils literal notranslate"><span class="pre">fractions.Fraction</span></code> value must be used.</p>
+</div>
+<p>Drop-frame must be set specifically:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Framerate</span><span class="p">(</span><span class="mf">29.97</span><span class="p">,</span> <span class="n">dropframe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[29.97 NTSC DF]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Dropframe Restrictions</strong></p>
+<p>Dropframe timecode may only be used on framerates that are a multiple of 30000/1001
+(29.97). The dropframe algorithm cannot be applied to any other timebase, as
+described in
+<a class="reference external" href="https://www.davidheidelberger.com/2010/06/10/drop-frame-timecode/">this article</a></p>
+</div>
+</div>
+<div class="section" id="timecode-representations">
+<h1>Timecode Representations<a class="headerlink" href="#timecode-representations" title="Permalink to this headline">¶</a></h1>
+<p>Timecode represents a specific frame of a video, and can be represented a number of
+different ways. This section will give a brief overview of the representation attributes
+<a class="reference internal" href="api.html#vtc.Timecode" title="vtc.Timecode"><code class="xref py py-class docutils literal notranslate"><span class="pre">vtc.Timecode</span></code></a> exposes, what they represent, and in what context you would
+expect to see them.</p>
+<div class="section" id="timecode">
+<h2>Timecode<a class="headerlink" href="#timecode" title="Permalink to this headline">¶</a></h2>
+<p><strong>property:</strong> <a class="reference internal" href="api.html#vtc.Timecode.timecode" title="vtc.Timecode.timecode"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtc.Timecode.timecode()</span></code></a></p>
+<p><strong>what it is:</strong> timecode is used as a human-readable way to represent the id of a given
+frame. It is formatted to give a rough sense of where to find a frame:
+[HOURS]:[MINUTES]:[SECONDS]:[FRAME]. For more on timecode, see Frame.io’s
+<a class="reference external" href="https://blog.frame.io/2017/07/17/timecode-and-frame-rates/">excellent post</a> on the
+subject.</p>
+<p><strong>where you see it:</strong> Timecode is ubiquitous in video editing, a small sample of places
+you might see timecode:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Source and Playback monitors in your favorite NLE.</p></li>
+<li><p>Burned into the footage for dailies.</p></li>
+<li><p>Cut lists like an EDL.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="frame-number">
+<h2>Frame Number<a class="headerlink" href="#frame-number" title="Permalink to this headline">¶</a></h2>
+<p><strong>property:</strong> <a class="reference internal" href="api.html#vtc.Timecode.frames" title="vtc.Timecode.frames"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtc.Timecode.frames()</span></code></a></p>
+<p><strong>what it is:</strong> frame number is the number of a frame if the timecode started at
+00:00:00:00 and had been running until the current value. A timecode of ‘00:00:00:10’
+has a frame number of 10. A timecode of ‘01:00:00:00’ has a frame number of 86400.</p>
+<p><strong>where you see it:</strong></p>
+<blockquote>
+<div><ul>
+<li><p>Frame-sequence files: ‘my_vfx_shot.0086400.exr’</p></li>
+<li><p>FCP7XML cut lists:</p>
+<blockquote>
+<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;timecode&gt;</span>
+    <span class="nt">&lt;rate&gt;</span>
+        <span class="nt">&lt;timebase&gt;</span>24<span class="nt">&lt;/timebase&gt;</span>
+        <span class="nt">&lt;ntsc&gt;</span>TRUE<span class="nt">&lt;/ntsc&gt;</span>
+    <span class="nt">&lt;/rate&gt;</span>
+    <span class="nt">&lt;string&gt;</span>01:00:00:00<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;frame&gt;</span>86400<span class="nt">&lt;/frame&gt;</span>  <span class="c">&lt;!-- &lt;====THIS LINE--&gt;</span>
+    <span class="nt">&lt;displayformat&gt;</span>NDF<span class="nt">&lt;/displayformat&gt;</span>
+<span class="nt">&lt;/timecode&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="seconds">
+<h2>Seconds<a class="headerlink" href="#seconds" title="Permalink to this headline">¶</a></h2>
+<p><strong>property:</strong> <a class="reference internal" href="api.html#vtc.Timecode.frames" title="vtc.Timecode.frames"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtc.Timecode.frames()</span></code></a></p>
+<p><strong>what it is:</strong> the number of real-world seconds that have elapsed between 00:00:00:00
+and the timecode value. With NTSC timecode, the timecode drifts from the real-world
+elapsed time.</p>
+<p><strong>where you see it:</strong> Anywhere real-world time needs to be calculated.</p>
+</div>
+<div class="section" id="runtime">
+<h2>Runtime<a class="headerlink" href="#runtime" title="Permalink to this headline">¶</a></h2>
+<p><strong>property:</strong> <a class="reference internal" href="api.html#vtc.Timecode.runtime" title="vtc.Timecode.runtime"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtc.Timecode.runtime()</span></code></a></p>
+<p><strong>what it is:</strong> the formatted version of seconds. It looks like timecode, but with a
+decimal seconds value instead of a frame number place.</p>
+<p><strong>where you see it:</strong> Anywhere real-world time is used.</p>
+<blockquote>
+<div><ul>
+<li><p>FFMPEG commands:</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ffmpeg -ss <span class="m">00</span>:00:30.5 -i input.mov -t <span class="m">00</span>:00:10.25 output.mp4
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="rational-time">
+<h2>Rational Time<a class="headerlink" href="#rational-time" title="Permalink to this headline">¶</a></h2>
+<p><strong>property:</strong> <a class="reference internal" href="api.html#vtc.Timecode.rational" title="vtc.Timecode.rational"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtc.Timecode.rational()</span></code></a></p>
+<p><strong>what it is:</strong> the number of real-world seconds that have elapsed between 00:00:00:00
+and the timecode value, expressed as a fraction.</p>
+<p><strong>where you see it:</strong> In code that needs to do lossless calculations of playback time
+elapsed, but cannot rely on frame count, like adding two timecodes together with
+different framerates.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/PixarAnimationStudios/OpenTimelineIO">Open Timeline IO</a> uses
+rational time to track it’s media playback.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="adobe-premiere-pro-ticks">
+<h2>Adobe Premiere Pro Ticks<a class="headerlink" href="#adobe-premiere-pro-ticks" title="Permalink to this headline">¶</a></h2>
+<p><strong>property:</strong> <a class="reference internal" href="api.html#vtc.Timecode.premiere_ticks" title="vtc.Timecode.premiere_ticks"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtc.Timecode.premiere_ticks()</span></code></a></p>
+<p><strong>what it is:</strong> internally, Adobe Premiere Pro uses ticks to divide up a second, and
+keep track of how far into that second we are. There are 254016000000 ticks in a second,
+regardless of framerate in Premiere.</p>
+<p><strong>where you see it:</strong></p>
+<blockquote>
+<div><ul>
+<li><p>Premiere Pro Panel functions and scripts</p></li>
+<li><p>FCP7XML cutlists generated from Premiere:</p>
+<blockquote>
+<div><div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;clipitem</span> <span class="na">id=</span><span class="s">&quot;clipitem-1&quot;</span><span class="nt">&gt;</span>
+    ...
+    <span class="nt">&lt;in&gt;</span>158<span class="nt">&lt;/in&gt;</span>
+    <span class="nt">&lt;out&gt;</span>1102<span class="nt">&lt;/out&gt;</span>
+    <span class="nt">&lt;pproTicksIn&gt;</span>1673944272000<span class="nt">&lt;/pproTicksIn&gt;</span>
+    <span class="nt">&lt;pproTicksOut&gt;</span>11675231568000<span class="nt">&lt;/pproTicksOut&gt;</span>
+    ...
+<span class="nt">&lt;/clipitem&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="feet-and-frames">
+<h2>Feet And Frames<a class="headerlink" href="#feet-and-frames" title="Permalink to this headline">¶</a></h2>
+<p><strong>what it is:</strong> On physical film, each foot contains a certain number of frames. For
+35mm, 4-perf film (the most common type on Hollywood movies), this number is 16
+frames per foot. Feet-And-Frames was often used in place of Keycode to quickly reference
+a frame in the edit.</p>
+<p><strong>where you see it:</strong> For the most part, feet + frames has died out as a reference,
+because digital media is not measured in feet. The most common place it is still used
+is Studio Sound Departments. Many Sound Mixers and Designers intuitively think in
+feet + frames, and it is often burned into the reference picture for them.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Sound turnover reference picture.</p></li>
+<li><p>Sound turnover change lists.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="timecode-value-inferences">
+<h1>Timecode Value Inferences<a class="headerlink" href="#timecode-value-inferences" title="Permalink to this headline">¶</a></h1>
+<p>When creating a timecode or using operators, vtc.Timecode interprets other values
+based on their type. This allows fast scripting by being able to use shorthand for
+things like adding frames or seconds to a timecode without instantiating an entire
+new <code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code> instance, like so:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tc</span> <span class="o">=</span> <span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="s2">&quot;01:00:00:00&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F23_98</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc</span> <span class="o">+</span> <span class="s2">&quot;01:00:00:00&quot;</span>
+<span class="go">[02:00:00:00 @ [23.98 NTSC]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc</span> <span class="o">+</span> <span class="mi">12</span>
+<span class="go">[01:00:00:12 @ [23.98 NTSC]]</span>
+</pre></div>
+</div>
+<p>In the first addition example, the timecode string is interpreted as a timecode. In
+the second, our int value is interpreted as a frame count.</p>
+<p>The below table details how types are interpreted by vtc when both instantiating new
+Timecode instances and doing operations.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Python Type</p></th>
+<th class="head"><p>Interpreted As</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>string (‘HH:MM:SS:FF’)</p></td>
+<td><p>Timecode</p></td>
+</tr>
+<tr class="row-odd"><td><p>string (‘HH:MM:SS.FF’)</p></td>
+<td><p>Runtime</p></td>
+</tr>
+<tr class="row-even"><td><p>string (‘FEET+FRAMES’)</p></td>
+<td><p>Feet+Frames</p></td>
+</tr>
+<tr class="row-odd"><td><p>int</p></td>
+<td><p>Frame Number</p></td>
+</tr>
+<tr class="row-even"><td><p>fractions.Fraction</p></td>
+<td><p>Seconds</p></td>
+</tr>
+<tr class="row-odd"><td><p>decimal.Decimal</p></td>
+<td><p>Seconds</p></td>
+</tr>
+<tr class="row-even"><td><p>float</p></td>
+<td><p>Seconds</p></td>
+</tr>
+<tr class="row-odd"><td><p>vtc.PremiereTicks</p></td>
+<td><p>Adobe Premiere Pro Ticks</p></td>
+</tr>
+<tr class="row-even"><td><p>vtc.Timecode</p></td>
+<td><p>value.rational as seconds</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="timecode-arithmetic">
+<h1>Timecode Arithmetic<a class="headerlink" href="#timecode-arithmetic" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code> type supports the following operations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Addition</p></li>
+<li><p>Subtraction</p></li>
+<li><p>Multiplication</p></li>
+<li><p>Division</p></li>
+<li><p>Floor Division</p></li>
+<li><p>Divmod</p></li>
+<li><p>Modulo</p></li>
+<li><p>Absolute Value</p></li>
+<li><p>Negation</p></li>
+</ul>
+</div></blockquote>
+<p>When two <code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code> values are involved in an operation together, the
+framerate from the one on the left side is used. The real-world times of the timecodes
+are added, then rounded to the nearest frame given the left-hand framerate.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="s2">&quot;01:00:00:00&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F24</span><span class="p">)</span> <span class="o">+</span> <span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="s2">&quot;01:00:00:00&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F23_98</span><span class="p">)</span>
+<span class="go">[02:00:03:14 @ [24]]</span>
+</pre></div>
+</div>
+<p>We might expect a result of 02:00:00:00 here, but because the real-time playback of
+“01:00:00:00” at 23.98 NTSC is ~01:00:03:14, we get the result above.</p>
+</div>
+<div class="section" id="timecode-rounding">
+<h1>Timecode Rounding<a class="headerlink" href="#timecode-rounding" title="Permalink to this headline">¶</a></h1>
+<p>Timecode is always rounded to the nearest complete frame when instantiating a new
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code> value. Partial frames are not accepted as this could result in
+accumulated drift from imprecise calculations.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">235</span><span class="p">,</span> <span class="mi">240</span><span class="p">),</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F24</span><span class="p">)</span><span class="o">.</span><span class="n">rational</span>
+<span class="go">Fraction(1, 1)</span>
+</pre></div>
+</div>
+<p>This applies to adding two timecodes together as well:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tc1</span> <span class="o">=</span> <span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F24</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc2</span> <span class="o">=</span> <span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F30</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc1</span><span class="o">.</span><span class="n">rational</span>
+<span class="go">Fraction(1, 24)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc2</span><span class="o">.</span><span class="n">rational</span>
+<span class="go">Fraction(1, 30)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc3</span> <span class="o">=</span> <span class="n">tc1</span> <span class="o">+</span> <span class="n">tc2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc3</span><span class="o">.</span><span class="n">rational</span>
+<span class="go">Fraction(1, 12)</span>
+</pre></div>
+</div>
+<p>We assume that an NLE is not going to allow cuts to fall on fractional frames, and
+adjust accordingly.</p>
+</div>
+<div class="section" id="timecode-comparison">
+<h1>Timecode Comparison<a class="headerlink" href="#timecode-comparison" title="Permalink to this headline">¶</a></h1>
+<p>Timecode comparison is done based on real-world elapsed time, not frame count:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tc1</span> <span class="o">=</span> <span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="s2">&quot;01:00:00:00&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F23_98</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc2</span> <span class="o">=</span> <span class="n">vtc</span><span class="o">.</span><span class="n">Timecode</span><span class="p">(</span><span class="s2">&quot;01:00:00:00&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">vtc</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">F24</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc1</span> <span class="o">==</span> <span class="n">tc2</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tc1</span> <span class="o">&gt;</span> <span class="n">tc2</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>This has implications for sorting:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">([</span><span class="n">tc1</span><span class="p">,</span> <span class="n">tc2</span><span class="p">])</span>
+<span class="go">[[01:00:00:00 @ [24]], [01:00:00:00 @ [23.98 NTSC]]]</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="api.html" class="btn btn-neutral float-right" title="Timecode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright &#39;2021, Open Cinema Collective&#39;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

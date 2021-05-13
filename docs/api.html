@@ -1,0 +1,614 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Timecode &mdash; vtc 0.0.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Intro" href="guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> vtc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#timecode-a-history">Timecode: A History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#supplied-framerates">Supplied Framerates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#manual-framerate-creation">Manual Framerate Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#timecode-representations">Timecode Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#timecode-value-inferences">Timecode Value Inferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#timecode-arithmetic">Timecode Arithmetic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#timecode-rounding">Timecode Rounding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html#timecode-comparison">Timecode Comparison</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Timecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#framerate">Framerate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#rate">RATE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#premiereticks">PremiereTicks</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">vtc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Timecode</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-vtc"></span><p>The vtc module contains types for working with SMPTE and arbitrary timecode.</p>
+<div class="section" id="timecode">
+<h1>Timecode<a class="headerlink" href="#timecode" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="vtc.Timecode">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Timecode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vtc/_timecode.html#Timecode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vtc.Timecode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Timecode represents the frame at a particular time in a video.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code>, <a class="reference internal" href="#vtc.PremiereTicks" title="vtc._premiere_ticks.PremiereTicks"><code class="xref py py-class docutils literal notranslate"><span class="pre">PremiereTicks</span></code></a>, <a class="reference internal" href="#vtc.Timecode" title="vtc._timecode.Timecode"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code></a>]) – <p>The source value to parse. The values type determines how it is
+interpreted:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">vtc.Timecode</span></code>: used the <code class="docutils literal notranslate"><span class="pre">vtc.Timecode.rational</span></code> seconds value to
+construct a new timecode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">string</span></code>: etiher a timecode, runtime, or feet+frames string. Runtime
+strings must have a fractal seconds place, i.e. ‘01:00:00.0’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code>: frame count.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decimal.Decimal</span></code>: seconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">float</span></code>: seconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fractions.Fraction</span></code>: seconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vtc.PremiereTicks</span></code>: Adobe Premiere Pro ticks value.</p></li>
+</ul>
+</p></li>
+<li><p><strong>rate</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#vtc.Framerate" title="vtc._framerate.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – The framerate to use for this timecode. May be any value which
+can be passed to the constructor of <a class="reference internal" href="#vtc.Framerate" title="vtc.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a> or a
+<a class="reference internal" href="#vtc.Framerate" title="vtc.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a>. May only be <code class="docutils literal notranslate"><span class="pre">None</span></code> if <code class="docutils literal notranslate"><span class="pre">src</span></code> is  a <a class="reference internal" href="#vtc.Framerate" title="vtc.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a>
+instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A newly constructed <a class="reference internal" href="#vtc.Timecode" title="vtc.Timecode"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code></a> value.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If a string value passed to the constructor is not a valid
+timecode, runtime, or feet+frames, or no rate value can be found.</p></li>
+<li><p><strong>TypeError</strong> – If passed an unsupported type.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="vtc.Timecode.rebase">
+<span class="sig-name descname"><span class="pre">rebase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vtc/_timecode.html#Timecode.rebase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vtc.Timecode.rebase" title="Permalink to this definition">¶</a></dt>
+<dd><p>rebase re-calculates the timecode at a new frame rate based on the frame-count
+value of the current timecode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_rate</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#vtc.Framerate" title="vtc._framerate.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – the new rate to rebase at.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#vtc.Timecode" title="vtc._timecode.Timecode"><code class="xref py py-class docutils literal notranslate"><span class="pre">Timecode</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The new, rebased timecode.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vtc.Timecode.runtime">
+<span class="sig-name descname"><span class="pre">runtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vtc/_timecode.html#Timecode.runtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vtc.Timecode.runtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runtime returns the true runtime of the timecode in HH:MM:SS.FFFFFFFFF format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>precision</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – how many places to print for fractional seconds.
+None=no rounding.</p>
+</dd>
+</dl>
+<p>Runtime will always be returned with at least one decimal place in order to
+distinguish it from timecode without an hours value. A runtime of exactly one
+hour will be returned as ‘01:00:00.0’</p>
+<dl class="simple">
+<dt>Note: The true runtime will often diverge from the hours, minutes, and seconds</dt><dd><p>value of the timecode representation when dealing with non-whole-frame
+framerates. Even drop-frame timecode does not continuously adhere 1:1 to the
+actual runtime. For instance, [01:00:00;00 &#64; 29.97 DF] has a true runtime of
+‘00:59:59.9964’, and [01:00:00:00 &#64; 23.98 NTSC] has a true runtime of
+‘01:00:03.6’</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.feet_and_frames">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">feet_and_frames</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#vtc.Timecode.feet_and_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the number of feet and frames this timecode represents if it were
+shot on 35mm 4-perf film (16 frames per foot). ex: ‘5400+13’.</p>
+<p>feet and frames is most commonly used as a reference in the sound mixing world.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.frames">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">frames</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#vtc.Timecode.frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>frames returns the frame number of this timecode (how many frames would have
+played starting at 0 between 00:00:00:00 and the tc this value represents.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.premiere_ticks">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">premiere_ticks</span></span><em class="property"><span class="pre">:</span> <span class="pre">vtc._premiere_ticks.PremiereTicks</span></em><a class="headerlink" href="#vtc.Timecode.premiere_ticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>premiere_ticks returns the number of elapsed ticks this timecode represents in
+Adobe Premiere Pro.</p>
+<p>Premiere uses ticks internally to track elapsed time. A second contains
+254016000000 ticks, regardless of framerate.</p>
+<p>These ticks are present in Premiere FCP7XML cutlists, and can sometimes be used
+for more precise calculations during respeeds.</p>
+<p>Ticks are also used for scripting in Premiere Panels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#vtc.PremiereTicks" title="vtc._premiere_ticks.PremiereTicks"><code class="xref py py-class docutils literal notranslate"><span class="pre">PremiereTicks</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.rate">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rate</span></span><em class="property"><span class="pre">:</span> <span class="pre">vtc._framerate.Framerate</span></em><a class="headerlink" href="#vtc.Timecode.rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>rate is the framerate at which this timecode is being interpreted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#vtc.Framerate" title="vtc._framerate.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.rational">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rational</span></span><em class="property"><span class="pre">:</span> <span class="pre">fractions.Fraction</span></em><a class="headerlink" href="#vtc.Timecode.rational" title="Permalink to this definition">¶</a></dt>
+<dd><p>frac is a rational (fraction) representation of number of seconds this timecode
+represents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.seconds">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">seconds</span></span><em class="property"><span class="pre">:</span> <span class="pre">decimal.Decimal</span></em><a class="headerlink" href="#vtc.Timecode.seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>seconds returns the number of seconds that would have elapsed between
+00:00:00:00 and the timecode this value represents.</p>
+<p>This value is a decimal.Decimal value to avoid floating-point shenanigans.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.sections">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sections</span></span><em class="property"><span class="pre">:</span> <span class="pre">vtc._timecode_sections.TimecodeSections</span></em><a class="headerlink" href="#vtc.Timecode.sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>sections returns the sections of a timecode as ints for callers to
+format/work on as desired.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TimecodeSections</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Timecode.timecode">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">timecode</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#vtc.Timecode.timecode" title="Permalink to this definition">¶</a></dt>
+<dd><p>timecode returns the formatted SMPTE timecode: (ex: 01:00:00:00).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="framerate">
+<h1>Framerate<a class="headerlink" href="#framerate" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="vtc.Framerate">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">Framerate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ntsc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vtc/_framerate.html#Framerate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vtc.Framerate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Framerate is the rate at which a video file frames are played back.</p>
+<p>Framerate is measured in frames-per-second (24/1 = 24 frames-per-second).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#vtc.Framerate" title="vtc._framerate.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – <p>the source value to parse to a Framerate. src must conform to
+one of the following value types:</p>
+<ul>
+<li><p><a class="reference internal" href="#vtc.Framerate" title="vtc.Framerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Framerate</span></code></a>: Another timebase value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: Strings may be of a fractional value (‘24/1’), whole numbers
+representing the fps (‘24’) OR decimal numbers like (‘23.9876’) or 23.98.
+Such values will be converted to their actual meaning (24000/1001).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Tuple[int,</span> <span class="pre">int]</span></code>: Numerator and denominator of a fraction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fractions.Fraction</span></code> value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">float</span></code> value – only allowed if ntsc=true.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>if a value like 1/24 is passed in (where the numerator is less than
+the denominator), the value will be converted to 24/1 after being
+parsed.</p>
+</div>
+</p></li>
+<li><p><strong>ntsc</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]) – <p>Whether timecode should be calculated via NTSC convention.</p>
+<p>For NTSC, playback speed is 23.976, the TIMECODE is still calculated as if
+it were at 24fps, which affects how a <a class="reference internal" href="#vtc.Timecode.timecode" title="vtc.Timecode.timecode"><code class="xref py py-func docutils literal notranslate"><span class="pre">timecode()</span></code></a> value
+will be rendered.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">None</span></code>, non-whole number floats like 23.98 and fractional values
+with a denominator of 1001 will be assumed to be ntsc, but whole-numbers
+will be left as-is.</p>
+<p>When this option is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the framerate will be rounded to the nearest
+whole number before the <a class="reference internal" href="#vtc.Timecode.timecode" title="vtc.Timecode.timecode"><code class="xref py py-func docutils literal notranslate"><span class="pre">timecode()</span></code></a> representation is
+calculated.</p>
+</p></li>
+<li><p><strong>dropframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether this is a drop-frame style timecode (only available
+for frame rates divisible by 30000/1001 like 29.97 and 59.94).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Framerate.dropframe">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dropframe</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#vtc.Framerate.dropframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this Framerate is drop-frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Framerate.ntsc">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ntsc</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#vtc.Framerate.ntsc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this is an NTSC-style time base (aka 23.98, 24000/1001, etc).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Framerate.playback">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">playback</span></span><em class="property"><span class="pre">:</span> <span class="pre">fractions.Fraction</span></em><a class="headerlink" href="#vtc.Framerate.playback" title="Permalink to this definition">¶</a></dt>
+<dd><p>The rational representation of the real-world video playback speed in
+frames-per-second as a fraction.</p>
+<p>example: 24000/1001.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#vtc.Framerate.playback" title="vtc.Framerate.playback"><code class="xref py py-func docutils literal notranslate"><span class="pre">playback()</span></code></a> and <a class="reference internal" href="#vtc.Framerate.timebase" title="vtc.Framerate.timebase"><code class="xref py py-func docutils literal notranslate"><span class="pre">timebase()</span></code></a> only differ in
+NTSC framerates. All non-NTSC framerates will have identical values for
+both properties.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vtc.Framerate.timebase">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">timebase</span></span><em class="property"><span class="pre">:</span> <span class="pre">fractions.Fraction</span></em><a class="headerlink" href="#vtc.Framerate.timebase" title="Permalink to this definition">¶</a></dt>
+<dd><p>The rational representation of the timecode display speed in frames-per-second
+as a fraction.</p>
+<p>example: 24/1</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#vtc.Framerate.playback" title="vtc.Framerate.playback"><code class="xref py py-func docutils literal notranslate"><span class="pre">playback()</span></code></a> and <a class="reference internal" href="#vtc.Framerate.timebase" title="vtc.Framerate.timebase"><code class="xref py py-func docutils literal notranslate"><span class="pre">timebase()</span></code></a> only differ in
+NTSC framerates. All non-NTSC framerates will have identical values for
+both properties.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="rate">
+<h1>RATE<a class="headerlink" href="#rate" title="Permalink to this headline">¶</a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="vtc.RATE">
+<span class="sig-name descname"><span class="pre">RATE</span></span><a class="headerlink" href="#vtc.RATE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rate contains a number of pre-defined, common framerates for ease-of-use</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 31%" />
+<col style="width: 14%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Framerate</p></th>
+<th class="head"><p>NTSC</p></th>
+<th class="head"><p>DROP FRAME</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>F23_98</p></td>
+<td><p>24000/1001</p></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>F24</p></td>
+<td><p>24/1</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>F29_97_NDF</p></td>
+<td><p>30000/1001</p></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>F29_97_DF</p></td>
+<td><p>30000/1001</p></td>
+<td><p>True</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p>F30</p></td>
+<td><p>30/1</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>F47_95</p></td>
+<td><p>40000/1001</p></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>F48</p></td>
+<td><p>48/1</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>F59_94_NDF</p></td>
+<td><p>60000/1001</p></td>
+<td><p>True</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>F59_94_DF</p></td>
+<td><p>60000/1001</p></td>
+<td><p>True</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p>F60</p></td>
+<td><p>60/1</p></td>
+<td><p>False</p></td>
+<td><p>True</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="premiereticks">
+<h1>PremiereTicks<a class="headerlink" href="#premiereticks" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="vtc.PremiereTicks">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PremiereTicks</span></span><a class="reference internal" href="_modules/vtc/_premiere_ticks.html#PremiereTicks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vtc.PremiereTicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>PremiereTicks signals than an int value represents an Adobe Premier Pro ticks value
+and can be used to wrap ints for parsing tc and doing mathematical operations.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="guide.html" class="btn btn-neutral float-left" title="Intro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright &#39;2021, Open Cinema Collective&#39;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
