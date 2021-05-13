@@ -30,7 +30,7 @@ def _parse_drop_frame_adjustment(
     total_minutes = 60 * sections.hours + sections.minutes
     adjustment = drop_frames * (total_minutes - total_minutes // 10)
 
-    return fractions.Fraction(adjustment, 1)
+    return -fractions.Fraction(adjustment, 1)
 
 
 def _frame_num_to_drop_frame_num(

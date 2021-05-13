@@ -126,7 +126,7 @@ def _parse_tc_str(matched: re.Match, rate: Framerate) -> fractions.Fraction:
     frames_frac = frames + seconds * calc_rate.playback
 
     # Add the drop-frame drop_adjustment
-    frames_frac -= drop_adjustment
+    frames_frac += drop_adjustment
 
     if is_negative:
         frames_frac = -frames_frac
