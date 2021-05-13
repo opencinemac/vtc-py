@@ -205,15 +205,11 @@ class Timecode:
                 self.rate.timebase,
             )
 
-        rate_frac = self.rate.playback
-        if rate.ntsc:
-            # If this is an ntsc frame rate, we need to present the timecode as if it
-            # were a whole-frame framerate (23.98 gets presented as if it were 24).
-            rate_frac = self.rate.timebase
+        timebase = rate.timebase
 
-        hours, frames = divmod(frames_number, rate_frac * _SECONDS_PER_HOUR)
-        minutes, frames = divmod(frames, rate_frac * _SECONDS_PER_MINUTE)
-        seconds, frames = divmod(frames, rate_frac)
+        hours, frames = divmod(frames_number, timebase * _SECONDS_PER_HOUR)
+        minutes, frames = divmod(frames, timebase * _SECONDS_PER_MINUTE)
+        seconds, frames = divmod(frames, timebase)
 
         return TimecodeSections(
             # If our value is less than 0, this is a negative value.
