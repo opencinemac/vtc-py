@@ -96,6 +96,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("3603.6"),
                 runtime="01:00:03.6",
                 feet_and_frames="5400+00",
+                ppro_ticks=vtc.PremiereTicks(915372057600000),
             ),
             # Test Negative
             ParseTCCase(
@@ -106,6 +107,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("3603.6"),
                 runtime="-01:00:03.6",
                 feet_and_frames="-5400+00",
+                ppro_ticks=vtc.PremiereTicks(-915372057600000),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F23_98,
@@ -115,6 +117,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("2402.4"),
                 runtime="00:40:02.4",
                 feet_and_frames="3600+00",
+                ppro_ticks=vtc.PremiereTicks(610248038400000),
             ),
             # Test negative
             ParseTCCase(
@@ -125,6 +128,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("2402.4"),
                 runtime="-00:40:02.4",
                 feet_and_frames="-3600+00",
+                ppro_ticks=vtc.PremiereTicks(-610248038400000),
             ),
             # 24 ---------------------------------
             # ------------------------------------
@@ -136,6 +140,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal(3600),
                 runtime="01:00:00.0",
                 feet_and_frames="5400+00",
+                ppro_ticks=vtc.PremiereTicks(914457600000000),
             ),
             # Negative
             ParseTCCase(
@@ -146,6 +151,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal(3600),
                 runtime="-01:00:00.0",
                 feet_and_frames="-5400+00",
+                ppro_ticks=vtc.PremiereTicks(-914457600000000),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F24,
@@ -155,6 +161,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("2400.0"),
                 runtime="00:40:00.0",
                 feet_and_frames="3600+00",
+                ppro_ticks=vtc.PremiereTicks(609638400000000),
             ),
             # negative
             ParseTCCase(
@@ -165,6 +172,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("2400.0"),
                 runtime="-00:40:00.0",
                 feet_and_frames="-3600+00",
+                ppro_ticks=vtc.PremiereTicks(-609638400000000),
             ),
             # 29.97 DF ---------------------------
             # ------------------------------------
@@ -176,6 +184,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("0.0"),
                 runtime="00:00:00.0",
                 feet_and_frames="0+00",
+                ppro_ticks=vtc.PremiereTicks(0),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -185,6 +194,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("2.068733333333333333333333333"),
                 runtime="00:00:02.068733333",
                 feet_and_frames="3+14",
+                ppro_ticks=vtc.PremiereTicks(525491366400),
             ),
             # negative
             ParseTCCase(
@@ -195,6 +205,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("2.068733333333333333333333333"),
                 runtime="-00:00:02.068733333",
                 feet_and_frames="-3+14",
+                ppro_ticks=vtc.PremiereTicks(-525491366400),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -204,6 +215,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("60.06"),
                 runtime="00:01:00.06",
                 feet_and_frames="112+08",
+                ppro_ticks=vtc.PremiereTicks(15256200960000),
             ),
             # negative
             ParseTCCase(
@@ -214,6 +226,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("60.06"),
                 runtime="-00:01:00.06",
                 feet_and_frames="-112+08",
+                ppro_ticks=vtc.PremiereTicks(-15256200960000),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -223,6 +236,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("120.0532666666666666666666667"),
                 runtime="00:02:00.053266667",
                 feet_and_frames="224+14",
+                ppro_ticks=vtc.PremiereTicks(30495450585600),
             ),
             # negative
             ParseTCCase(
@@ -233,6 +247,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("120.0532666666666666666666667"),
                 runtime="-00:02:00.053266667",
                 feet_and_frames="-224+14",
+                ppro_ticks=vtc.PremiereTicks(-30495450585600),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -242,6 +257,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("599.9994"),
                 runtime="00:09:59.9994",
                 feet_and_frames="1123+14",
+                ppro_ticks=vtc.PremiereTicks(152409447590400),
             ),
             # negative
             ParseTCCase(
@@ -252,6 +268,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("599.9994"),
                 runtime="-00:09:59.9994",
                 feet_and_frames="-1123+14",
+                ppro_ticks=vtc.PremiereTicks(-152409447590400),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -261,6 +278,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("660.0594"),
                 runtime="00:11:00.0594",
                 feet_and_frames="1236+06",
+                ppro_ticks=vtc.PremiereTicks(167665648550400),
             ),
             # negative
             ParseTCCase(
@@ -271,6 +289,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("660.0594"),
                 runtime="-00:11:00.0594",
                 feet_and_frames="-1236+06",
+                ppro_ticks=vtc.PremiereTicks(-167665648550400),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F29_97_DF,
@@ -280,6 +299,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("3599.9964"),
                 runtime="00:59:59.9964",
                 feet_and_frames="6743+04",
+                ppro_ticks=vtc.PremiereTicks(914456685542400),
             ),
             # negative
             ParseTCCase(
@@ -290,6 +310,7 @@ class TestParse(unittest.TestCase):
                 seconds=-decimal.Decimal("3599.9964"),
                 runtime="-00:59:59.9964",
                 feet_and_frames="-6743+04",
+                ppro_ticks=vtc.PremiereTicks(-914456685542400),
             ),
             # 59.94 DF ---------------------------
             # ------------------------------------
@@ -301,6 +322,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("0.0"),
                 runtime="00:00:00.0",
                 feet_and_frames="0+00",
+                ppro_ticks=vtc.PremiereTicks(0),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F59_94_DF,
@@ -310,6 +332,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("1.017683333333333333333333333"),
                 runtime="00:00:01.017683333",
                 feet_and_frames="3+13",
+                ppro_ticks=vtc.PremiereTicks(258507849600),
             ),
             ParseTCCase(
                 rate=vtc.RATE.F59_94_DF,
@@ -319,6 +342,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("1.05105"),
                 runtime="00:00:01.05105",
                 feet_and_frames="3+15",
+                ppro_ticks=vtc.PremiereTicks(266983516800),
             ),
             # This is the first minute we should be skipping frames on. For 59.94 we
             # skip 4 frames.
@@ -330,6 +354,7 @@ class TestParse(unittest.TestCase):
                 seconds=decimal.Decimal("60.06"),
                 runtime="00:01:00.06",
                 feet_and_frames="225+00",
+                ppro_ticks=vtc.PremiereTicks(15256200960000),
             ),
         ]
 
