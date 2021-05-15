@@ -18,7 +18,7 @@ _runtime_regex: re.Pattern = re.compile(
 # _feet_and_frames_regex is the regex patter for matching a feet and frames string
 # (ex: 5400+13)
 _feet_and_frames_regex: re.Pattern = re.compile(
-    r"(?P<negative>-)?" r"(?P<feet>[0-9]+)" r"\+(?P<frames>[0-9]+)",
+    r"(?P<negative>-)?(?P<feet>[0-9]+)\+(?P<frames>[0-9]+)",
 )
 
 # Cache the number of seconds in a minute and hour.

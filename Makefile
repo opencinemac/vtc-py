@@ -22,7 +22,6 @@ clean:
 	-rm -r ./dist
 	-find '.' -name '*.pyc' -type f -delete
 	-rm .coverage
-	-rm -r .idea
 
 .PHONY: test
 test:

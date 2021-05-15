@@ -67,11 +67,11 @@ def _frame_num_to_drop_frame_num(
     tens_of_minutes, frames = divmod(frame_number, frames_per_10minutes_drop)
 
     # Create an adjustment for the number of 10s of minutes. It will be 9 times the
-    # drop value (we drop for the first 9 minutes, then leave the 10th alont.).
+    # drop value (we drop for the first 9 minutes, then leave the 10th alone).
     adjustment = 9 * drop_frames * tens_of_minutes
 
-    # Of our remaining frames are less than a whole minute, we aren't going to drop
-    # again. Add the adjustment and return
+    # If our remaining frames are less than a whole minute, we aren't going to drop
+    # again. Add the adjustment and return.
     if frames < frames_per_minute_whole:
         return frame_number + adjustment
 
@@ -81,7 +81,7 @@ def _frame_num_to_drop_frame_num(
     adjustment += drop_frames
 
     # Get the number of remaining drop-minutes present, and add a drop adjustment for
-    # each
+    # each.
     minutes_drop = frames // frames_per_minute_drop
     adjustment += minutes_drop * drop_frames
 
