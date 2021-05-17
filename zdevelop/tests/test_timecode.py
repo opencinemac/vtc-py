@@ -329,7 +329,7 @@ class TestParse(unittest.TestCase):
                 frac=fractions.Fraction(61061, 60000),
                 frames=61,
                 timecode="00:00:01;01",
-                    seconds=decimal.Decimal("1.017683333333333333333333333"),
+                seconds=decimal.Decimal("1.017683333333333333333333333"),
                 runtime="00:00:01.017683333",
                 feet_and_frames="3+13",
                 ppro_ticks=vtc.PremiereTicks(258507849600),
