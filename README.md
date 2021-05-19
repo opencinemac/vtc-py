@@ -4,7 +4,7 @@
 </p>
 <p align="center">A SMPTE Timecode Library for Python</p>
 <p align="center">
-    <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_apis/build/status/occlib-py?repoName=opencinemac%2Fvtc-py&branchName=dev" alt="click to see build pipeline"></a>
+    <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_apis/build/status/vtc-py?repoName=opencinemac%2Fvtc-py&branchName=dev"></a>
     <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://img.shields.io/azure-devops/tests/peake100/Open%20Cinema%20Collective/12/dev?compact_message" alt="click to see build pipeline"></a>
     <a href="https://dev.azure.com/peake100/Open%20Cinema%20Collective/_build?definitionId=12"><img src="https://img.shields.io/azure-devops/coverage/peake100/Open%20Cinema%20Collective/12/dev?compact_message" alt="click to see build pipeline"></a>
 </p>
