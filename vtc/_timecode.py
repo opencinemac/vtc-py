@@ -355,3 +355,15 @@ def _coerce_other(other: TimecodeSource, this_rate: Framerate) -> Timecode:
         return other
 
     return Timecode(other, rate=this_rate)
+
+
+# Tuple to be used for type checking whether something can be cast to a timecode.
+TimecodeSourceTypes = (
+    str,
+    int,
+    float,
+    fractions.Fraction,
+    decimal.Decimal,
+    PremiereTicks,
+    Timecode,
+)

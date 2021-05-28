@@ -41,3 +41,9 @@ PremiereTicks
 
 .. autoclass:: PremiereTicks
     :members:
+
+Range
+-----
+
+.. autoclass:: Range
+    :members:

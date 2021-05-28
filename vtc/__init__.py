@@ -2,9 +2,7 @@
 
 from ._version import __version__  # noqa
 
-from ._framerate import Framerate, FramerateSource, RATE
-from ._timecode import Timecode, TimecodeSource
-from ._premiere_ticks import PremiereTicks
-
-
-(Framerate, FramerateSource, Timecode, TimecodeSource, RATE, PremiereTicks)
+from ._framerate import Framerate, FramerateSource, RATE  # noqa
+from ._timecode import Timecode, TimecodeSource, TimecodeSourceTypes  # noqa
+from ._range import Range  # noqa
+from ._premiere_ticks import PremiereTicks  # noqa

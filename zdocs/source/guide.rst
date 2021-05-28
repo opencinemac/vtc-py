@@ -362,3 +362,86 @@ This has implications for sorting:
 
     >>> sorted([tc1, tc2])
     [[01:00:00:00 @ [24]], [01:00:00:00 @ [23.98 NTSC]]]
+
+
+Ranges
+------
+
+vtc offers the Range class for working with timecode ranges:
+
+    >>> tc1 = vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98)
+    >>> tc2 = vtc.Timecode("02:00:00:00", rate=vtc.RATE.F23_98)
+    >>> tc_range = vtc.Range(tc1, tc2)
+    >>> tc_range
+    [01:00:00:00 - 02:00:00:00 @ [23.98 NTSC]]
+    >>> tc_range.tc_in
+    [01:00:00:00 @ [23.98 NTSC]]
+    >>> tc_range.tc_out
+    [02:00:00:00 @ [23.98 NTSC]]
+
+.. note::
+    **Framerates**
+
+    A timecode Range can only be made between two timecodes with the same framerate.
+    A ``ValueError`` will be raised if tc1 and tc2 ave differing framerates.
+
+.. note::
+    **Valid Ranges**
+
+    A ranges in point must come before the outpoint. If the first tc passed to the range
+    comes after the second tc, the values will be flipped into the correct order.
+
+Get the length, in frames, of the range:
+
+    >>> len(tc_range)
+    86400
+
+To check if some timecode falls within a range:
+
+    >>> "01:30:00:00" in tc_range
+    True
+
+We can check if one range intersects another, and get that intersection:
+
+    >>> tc3 = vtc.Timecode("01:30:00:00", rate=vtc.RATE.F23_98)
+    >>> tc4 = vtc.Timecode("02:30:00:00", rate=vtc.RATE.F23_98)
+    >>> range_2 = vtc.Range(tc3, tc4)
+    >>> tc_range.intersection(range_2)
+    [01:30:00:00 - 02:00:00:00 @ [23.98 NTSC]]
+
+We can also get the separation of two non-intersecting ranges:
+
+    >>> tc5 = vtc.Timecode("02:30:00:00", rate=vtc.RATE.F23_98)
+    >>> tc6 = vtc.Timecode("03:30:00:00", rate=vtc.RATE.F23_98)
+    >>> range_3 = vtc.Range(tc5, tc6)
+    >>> tc_range.separation(range_3)
+    [02:00:00:00 - 02:30:00:00 @ [23.98 NTSC]]
+
+.. note::
+    **Inclusive vs Exclusive Timecode Ranges**
+
+    Ranges are *exclusive*, which means that the timecode at the end of the range does
+    not actually fall within it.
+
+    If you are used to working in Final Cut or Premiere, this will seem familiar, the
+    out point of a clip, segment, etc does not include the out point. In these programs
+    the out point represents the timecode that the *cut itself* falls on, with the frame
+    before being the final frame of the clip.
+
+    If you are coming from Avid, this may strike you as odd. In avid, the out point of a
+    clip is *the final actual frame of the clip*. This is called an *inclusive* range,
+    and is not what VTC does.
+
+    So why choose exclusive instead of inclusive? Two main reasons:
+
+    One is author preference. The author off this library primarily uses Premiere, and
+    works primarily with FCP7XML's, so therefore is primarily working with exclusive
+    frame rates.
+
+    The other is mathematical. With an exclusive range, to get the number of frames it
+    contains, you simply do  = duration. With an inclusive range, you have
+    to do tc_out - tc_in + 1 = duration, which is less intuitive and more prone to
+    error.
+
+    Keep this in mind as you work. Some application, like AVID and Redline, use an
+    inclusive frame range convention, and adjustments will need to be made accordingly.
