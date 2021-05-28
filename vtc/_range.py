@@ -37,7 +37,10 @@ class Range(Container[Union[TimecodeSource, "Range"]]):
             self._out = tc1
 
     def __str__(self) -> str:
-        return f"[{self._in.timecode} - {self._out.timecode} @ {self._in.rate}]"
+        return f"{self._in.timecode} - {self._out.timecode}"
+
+    def __repr__(self) -> str:
+        return f"[{self._in.timecode} - {self._out.timecode} @ {repr(self._in.rate)}]"
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Range):
@@ -72,7 +75,7 @@ class Range(Container[Union[TimecodeSource, "Range"]]):
     def intersection(self, other: "Range") -> Optional["Range"]:
         """
         Returns None if the two ranges do not intersect, otherwise returns the Range
-        of the intersection between the two Ranges.
+        of the intersection of the two Ranges.
         """
         if other not in self:
             return None

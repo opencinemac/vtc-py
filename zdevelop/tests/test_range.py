@@ -365,3 +365,10 @@ class TestRange(unittest.TestCase):
             tc2=vtc.Timecode("02:00:00:00", rate=vtc.RATE.F23_98),
         )
         self.assertNotIn(None, tc_range)
+
+    def test_repr(self) -> None:
+        tc_range = vtc.Range(
+            tc1=vtc.Timecode("01:00:00:00", rate=vtc.RATE.F23_98),
+            tc2=vtc.Timecode("02:00:00:00", rate=vtc.RATE.F23_98),
+        )
+        self.assertEqual("[01:00:00:00 - 02:00:00:00 @ [23.98 NTSC]]", repr(tc_range))
