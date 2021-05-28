@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>vtc._range &mdash; vtc 0.0.14 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> vtc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.14
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-a-history">Timecode: A History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#supplied-framerates">Supplied Framerates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#manual-framerate-creation">Manual Framerate Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-representations">Timecode Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-value-inferences">Timecode Value Inferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-arithmetic">Timecode Arithmetic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-rounding">Timecode Rounding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#timecode-comparison">Timecode Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html#ranges">Ranges</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Timecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#framerate">Framerate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#rate">RATE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#premiereticks">PremiereTicks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html#range">Range</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vtc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>vtc._range</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for vtc._range</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Container</span>
+
+<span class="kn">from</span> <span class="nn">._timecode</span> <span class="kn">import</span> <span class="n">Timecode</span><span class="p">,</span> <span class="n">TimecodeSource</span><span class="p">,</span> <span class="n">TimecodeSourceTypes</span>
+
+
+<div class="viewcode-block" id="Range"><a class="viewcode-back" href="../../api.html#vtc.Range">[docs]</a><span class="k">class</span> <span class="nc">Range</span><span class="p">(</span><span class="n">Container</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">TimecodeSource</span><span class="p">,</span> <span class="s2">&quot;Range&quot;</span><span class="p">]]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tc1</span><span class="p">:</span> <span class="n">Timecode</span><span class="p">,</span> <span class="n">tc2</span><span class="p">:</span> <span class="n">Timecode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Represents the range between two timecodes. A timecode Range is exclusive.</span>
+<span class="sd">        Timecode ranges cannot be negative in length, the absolute value between the two</span>
+<span class="sd">        timecodes is used.</span>
+
+<span class="sd">        :param tc1: The in point of the range.</span>
+
+<span class="sd">        :param tc2: The out point of the range. This timecode is not actually in the</span>
+<span class="sd">            range itself, but marks the delimiter where the range ends.</span>
+
+<span class="sd">        :raises ValueError: when the framerates of the two timecodes do not match.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            If tc1 is less than tc2, the values will be flipped, and tc2 will be used</span>
+<span class="sd">            as the in point, while tc1 is used as the out point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">tc1</span><span class="o">.</span><span class="n">rate</span> <span class="o">!=</span> <span class="n">tc2</span><span class="o">.</span><span class="n">rate</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Range in and out must have matching framerate&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">:</span> <span class="n">Timecode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_out</span><span class="p">:</span> <span class="n">Timecode</span>
+
+        <span class="k">if</span> <span class="n">tc1</span> <span class="o">&lt;</span> <span class="n">tc2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_in</span> <span class="o">=</span> <span class="n">tc1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_out</span> <span class="o">=</span> <span class="n">tc2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_in</span> <span class="o">=</span> <span class="n">tc2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_out</span> <span class="o">=</span> <span class="n">tc1</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="o">.</span><span class="n">timecode</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_out</span><span class="o">.</span><span class="n">timecode</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="o">.</span><span class="n">timecode</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_out</span><span class="o">.</span><span class="n">timecode</span><span class="si">}</span><span class="s2"> @ </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Range</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_in</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_out</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">)</span><span class="o">.</span><span class="n">frames</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Range</span><span class="p">):</span>
+            <span class="c1"># The range is not overlapping if this range ends before the other begins or</span>
+            <span class="c1"># beings after the other ends</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span> <span class="o">&gt;=</span> <span class="n">item</span><span class="o">.</span><span class="n">_out</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out</span> <span class="o">&lt;=</span> <span class="n">item</span><span class="o">.</span><span class="n">_in</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">TimecodeSourceTypes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in</span> <span class="o">&lt;=</span> <span class="n">item</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tc_in</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timecode</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The in point of the range.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tc_out</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timecode</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The out point of the range.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_out</span>
+
+<div class="viewcode-block" id="Range.intersection"><a class="viewcode-back" href="../../api.html#vtc.Range.intersection">[docs]</a>    <span class="k">def</span> <span class="nf">intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;Range&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Range&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns None if the two ranges do not intersect, otherwise returns the Range</span>
+<span class="sd">        of the intersection of the two Ranges.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">overlap_in</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_in</span><span class="p">)</span>
+        <span class="n">overlap_out</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Range</span><span class="p">(</span><span class="n">overlap_in</span><span class="p">,</span> <span class="n">overlap_out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Range.separation"><a class="viewcode-back" href="../../api.html#vtc.Range.separation">[docs]</a>    <span class="k">def</span> <span class="nf">separation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;Range&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Range&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns None if the two ranges intersect, otherwise returns the timecode range</span>
+<span class="sd">        between the two ranges.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">overlap_in</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_in</span><span class="p">)</span>
+        <span class="n">overlap_out</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_out</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Range</span><span class="p">(</span><span class="n">overlap_in</span><span class="p">,</span> <span class="n">overlap_out</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright &#39;2021, Open Cinema Collective&#39;.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
