@@ -65,6 +65,7 @@ Features
     - Poorly formatted tc    | '1:13:4'
   - Type inference for fast scripting (add a tc string to a Timecode value).
   - Built-in consts for common framerates.
+  - Range type for working with and comparing frame ranges.
   - Modern Python Typehints for static analysis.
 
 Demo
