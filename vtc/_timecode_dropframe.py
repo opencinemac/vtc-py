@@ -21,7 +21,8 @@ def _parse_drop_frame_adjustment(
     # skip on minutes not divisible by 10.
     has_bad_frame = sections.frames < drop_frames
     is_tenth_minute = sections.minutes % 10 == 0 or sections.minutes == 0
-    if has_bad_frame and not is_tenth_minute:
+    is_first_second = sections.seconds == 0
+    if has_bad_frame and not is_tenth_minute and is_first_second:
         raise ValueError(
             f"drop-frame tc cannot have a frames value of less than {drop_frames} on "
             f"minutes not divisible by 10, found '{sections.frames}'",
